@@ -1,0 +1,37 @@
+.contenedor {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+}
+
+.img-404 {
+    width: 70vw;
+}
+
+.div-texto {
+    position: absolute;
+    z-index: 1;
+    bottom: 1rem;
+    font-size: 1.5rem;
+    width: 100vw;
+}
+
+svg {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+}
+
+.logo {
+    top: 2rem;
+    right: -1rem;
+    position: absolute;
+    width: 8vw;
+    transform: rotate(-91deg);
+    z-index: 2;
+}
+
+i {
+    font-size: 3rem;
+}

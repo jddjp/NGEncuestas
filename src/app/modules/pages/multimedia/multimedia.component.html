@@ -1,0 +1,150 @@
+<div class="surface-card p-4 border-round shadow-2">
+  <div class="flex align-items-center justify-content-between mb-4">
+    <h2 class="m-0">Gestión de Multimedia</h2>
+    <p-toast></p-toast>
+    <p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+  </div>
+
+  <!-- File Upload Section -->
+  <div class="surface-card p-4 border-round mb-4">
+    <div class="flex flex-column md:flex-row align-items-center gap-4">
+      <div class="flex flex-column w-full md:w-6">
+        <span class="p-input-icon-left w-full">
+          <input type="file" class="p-inputtext w-full" (change)="onFileSelected($event)" />
+        </span>
+        <small *ngIf="selectedFile" class="text-primary">Archivo seleccionado: {{selectedFile.name}}</small>
+      </div>
+      <div class="flex flex-column w-full md:w-6">
+        <p-dropdown [options]="categories" [(ngModel)]="selectedCategory" (onChange)="onCategoryChange()"
+                   placeholder="Seleccionar categoría" optionLabel="name" class="mb-2"></p-dropdown>
+        
+        <div *ngIf="showDescriptionInput" class="mt-2">
+          <span class="p-input-icon-left w-full">
+            <i class="pi pi-comment"></i>
+            <input type="text" pInputText class="w-full" 
+                  placeholder="Descripción"
+                  [(ngModel)]="description" />
+          </span>
+        </div>
+      </div>
+      <div class="flex align-items-center">
+        <button pButton type="button" icon="pi pi-upload" label="Subir archivo" 
+                class="p-button-raised" (click)="upload()" 
+                [disabled]="!selectedFile || uploadLoading || !selectedCategory || (showDescriptionInput && !description)">
+          <span *ngIf="uploadLoading" class="pi pi-spinner pi-spin ml-2"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="mb-4">
+    <p-tabView [(activeIndex)]="activeTabIndex" (onChange)="onTabChange($event)">
+      <p-tabPanel header="Todos">
+      </p-tabPanel>
+      <p-tabPanel header="Fotografías" leftIcon="pi pi-image">
+      </p-tabPanel>
+      <p-tabPanel header="Videos" leftIcon="pi pi-video">
+      </p-tabPanel>
+      <p-tabPanel header="Eventos" leftIcon="pi pi-calendar">
+      </p-tabPanel>
+    </p-tabView>
+  </div>
+
+  <!-- Media Gallery -->
+  <div *ngIf="loading" class="flex justify-content-center my-5">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <div *ngIf="!loading && filteredMediaList.length === 0" class="surface-card p-5 text-center">
+    <i class="pi pi-image text-4xl text-500 mb-3"></i>
+    <div class="text-900 font-bold text-xl mb-2">No hay archivos multimedia</div>
+  </div>
+
+  <div *ngIf="!loading && filteredMediaList.length > 0" class="grid">
+    <div *ngFor="let media of filteredMediaList" class="col-12 md:col-6 lg:col-4 xl:col-3 p-2">
+      <div class="surface-card border-round shadow-2 h-full transition-all transition-duration-300 hover:shadow-5 media-card">
+        <div class="relative">
+          <div *ngIf="media.category === 'event'" class="w-full border-round-top event-card-bg flex flex-column align-items-center justify-content-center p-4" style="height: 180px;">
+            <i class="pi pi-calendar text-5xl text-white mb-3"></i>
+            <div class="text-white font-medium text-center px-3 event-description">
+              {{media.description}}
+            </div>
+          </div>
+          
+          <!-- Image display -->
+          <img *ngIf="media.url && media.type === 'image' && media.category !== 'event'" 
+               [src]="media.url" class="w-full border-round-top" style="height: 180px; object-fit: cover;" 
+               alt="Imagen" />
+          
+          <!-- Video display --> 
+          <div *ngIf="media.url && media.type === 'video' && media.category !== 'event'" class="relative w-full border-round-top video-thumb" style="height: 120px;" (click)="openMediaUrl(media.url)">
+            <div class="video-thumb-bg flex align-items-center justify-content-center w-full h-full">
+              <i class="pi pi-play-circle video-play-icon"></i>
+            </div>
+          </div>
+          
+          <!-- For unknown types -->
+          <div *ngIf="!media.url && media.category !== 'event'" class="w-full flex align-items-center justify-content-center bg-gray-100" style="height: 180px;">
+            <i class="pi pi-file text-4xl text-500"></i>
+          </div>
+          
+          <!-- Category badge -->
+          <span class="category-badge absolute top-0 right-0 m-2 text-xs px-2 py-1 border-round bg-primary text-white">
+            {{getCategoryLabel(media.category)}}
+          </span>
+          <span *ngIf="media.category === 'event' && media.type !== 'other'" class="category-badge absolute top-0 left-0 m-2 text-xs px-2 py-1 border-round bg-secondary text-white">
+            {{getTypeLabel(media.type)}}
+          </span>
+        </div>
+        
+        <div class="p-3">
+          <div *ngIf="media.category === 'event'" class="text-500 font-medium mb-1 text-overflow-ellipsis overflow-hidden text-xs">
+            Evento
+          </div>
+          <div *ngIf="media.category !== 'event'" class="text-500 text-xs mb-2">
+            {{getFileName(media.url)}}
+          </div>
+
+          <div class="flex align-items-center justify-content-between mt-3 media-actions">
+            <!-- For events, show edit button instead of eye icon -->
+            <button *ngIf="media.category === 'event' && media.id" pButton icon="pi pi-pencil"
+                   class="p-button-text p-button-rounded" title="Editar"
+                   (click)="editEventDescription(media)"></button>
+            <a *ngIf="media.category !== 'event' && media.url" [href]="media.url" target="_blank"
+               class="p-button p-button-text p-button-rounded" title="Ver">
+              <i class="pi pi-eye"></i>
+            </a>
+            <button pButton type="button" icon="pi pi-trash"
+                    class="p-button-rounded p-button-danger p-button-text"
+                    (click)="deleteMedia(media)"
+                    title="Eliminar"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<p-dialog [(visible)]="editEventDialogVisible"
+          [style]="{width: '450px'}"
+          header="Editar descripción del evento"
+          [modal]="true"
+          styleClass="p-fluid">
+  <div class="field">
+    <label for="description">Descripción</label>
+    <textarea id="description" rows="3" pInputTextarea
+              [(ngModel)]="eventDescription"
+              placeholder="Descripción del evento"
+              class="w-full"></textarea>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton type="button" label="Cancelar"
+            icon="pi pi-times" class="p-button-text"
+            (click)="editEventDialogVisible = false"></button>
+    <button pButton type="button" label="Guardar"
+            icon="pi pi-check" class="p-button-text"
+            (click)="saveEventDescription()"></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,79 @@
+.center {
+  text-align: center;
+  padding: 20px;
+  border: 1px solid #e9e6e6;
+  border-radius: 8px;
+  background-color: #424242;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  cursor: pointer; /* Cambia el cursor al pasar sobre la imagen */
+}
+
+
+.card-container {
+  max-height: 600px; /* Altura máxima del contenedor antes de que aparezca el scroll */
+  overflow-y: auto; /* Habilita el scroll vertical cuando el contenido excede la altura máxima */
+  padding-right: 15px; /* Añade un padding derecho para evitar que el contenido se solape con el scroll */
+}
+
+.days{
+  padding-top: 10px;
+  color: rgba(255, 255, 255, 0.445);
+  font-size: 10px;
+}
+
+:host {
+  .ngx-color {
+    &.p-card {
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+  
+    .p-card-title {
+    }
+    .p-card-body {
+      padding: 1rem !important;
+      background: #a6120d;
+      color: #fff;
+    }
+  }
+  
+}
+
+:host ::ng-deep {
+  .ngx-color {
+    &.p-card {
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+  
+    .p-card-content {
+      padding: .3rem 0;
+    }
+    .p-card-body {
+      padding: .5rem !important;
+      background: black;
+      color: #fff;
+    }
+  }
+
+  .ngx-sin-resultados {
+    &.p-card {
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: none;
+    }
+  
+    .p-card-content {
+      padding: .3rem 0;
+    }
+    .p-card-body {
+      padding: .5rem !important;
+      color: #fff;
+    }
+  }
+}

@@ -1,0 +1,126 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-3 py-4">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4 p-3">
+                <ng-template pTemplate="left">
+                    <div class="my-0 ">
+                        <button pButton pRipple label="Agregar" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                </ng-template>
+            </p-toolbar>
+            <app-loading *ngIf="wait"></app-loading>
+            <p-table *ngIf="!wait" #dt [value]="users" [columns]="columnasTable" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['name']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} registros"
+                 selectionMode="multiple" [rowHover]="true" dataKey="uid">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Usuarios</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Buscar..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let columna of columnasTable" pSortableColumn="{{columna.field}}">
+                            {{columna.header}}
+                            <p-sortIcon [field]="columna.field"></p-sortIcon>
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-itemtable>
+                    <tr>
+                        <td style="width:33%; min-width:10rem;"><span class="p-column-title">Code</span>
+                            {{itemtable.name}}
+                        </td>
+                        <td style="width:33%; min-width:10rem;"><span class="p-column-title">description</span>
+                            {{itemtable.email}}
+                        </td>
+                        <td style="width:33%; min-width:10rem;"><span class="p-column-title">description</span>
+                            {{itemtable.rol}}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-text p-button-success mr-0"
+                                    (click)="edit(itemtable)"></button>
+                                <!--<button pButton pRipple icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger mr-0"
+                                    ></button>-->
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog [(visible)]="showInfo" [style]="{width: '450px'}" header='{{editar ? "EDITAR USUARIO" : "NUEVO USUARIO"}}'
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <app-widget-input-text nombre="name" label="Nombre" tipo="text" placeholder="Nombre del Usuario"
+                    [formGroup]="usuarioForm"></app-widget-input-text>
+
+                <!--<app-widget-input-textarea nombre="content" label="Descripción" disabled=false
+                    placeholder="Escribe tu post aqui.." [formGroup]="usuarioForm"></app-widget-input-textarea>-->
+
+                <!--<app-widget-input-switch nombre="fijar" label="Fijar" placeholder="Fijar"
+                    [formGroup]="usuarioForm"></app-widget-input-switch>-->
+
+                <!--<p-card header="">
+                    <h6>Imagen</h6>
+                    <div class="center">
+                        <img *ngIf="previsualizacion" [src]="previsualizacion" (click)="triggerFileInput()" alt=""
+                            width="250" />
+                        <img *ngIf="!imagenSelected" [alt]="" (click)="triggerFileInput()"
+                            src="../../../assets/img/default-image.jpg" width="350" />
+                    </div>
+
+                    <div class="container">
+                        <br />
+                        <div class="row">
+                            <div class="col" style="display: none">
+                                <input #fileInput (change)="capturarFile($event)" type="file" />
+                            </div>
+
+                        </div>
+                    </div>
+                </p-card>
+                <div class="container">
+                    <br />
+                    <div class="row">
+                        <div class="col" style="display: none">
+                            <input #fileInput (change)="capturarFile($event)" type="file" />
+                        </div>
+                        <div class="col" *ngIf="imagenSelected">
+                            <button pButton pRipple label="" icon="pi pi-trash" class="p-button-danger"
+                                (click)="clearImage()"></button>
+                        </div>
+                    </div>
+                </div>-->
+              
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialogNew()"></button>
+                <button *ngIf="!editar" pButton pRipple label="Guardar" [icon]="iconButton" class="p-button-text"
+                    (click)="saveUser()" [disabled]="saving_user" [loading]="loading"></button>
+                <button *ngIf="editar" pButton pRipple label="Editar" icon="pi pi-save" class="p-button-text"
+                    (click)="editUser()" [loading]="loading"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

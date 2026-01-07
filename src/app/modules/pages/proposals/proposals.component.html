@@ -1,0 +1,224 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-3 py-4">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4 p-3">
+                <ng-template pTemplate="left">
+                    <div class="my-0 ">
+                        <button pButton pRipple label="Agregar" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                </ng-template>
+            </p-toolbar>
+            <app-loading *ngIf="wait"></app-loading>
+            <p-table *ngIf="!wait" #dt [value]="proposals" [columns]="columnasTable" responsiveLayout="scroll" [rows]="10"
+                [globalFilterFields]="['title','description']" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando del {first} al {last} de {totalRecords} Propuestas"
+                 selectionMode="multiple" [rowHover]="true" dataKey="uid">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Gestión de propuestas</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Buscar..."
+                                class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let columna of columnasTable" pSortableColumn="{{columna.field}}">
+                            {{columna.header}}
+                            <p-sortIcon [field]="columna.field"></p-sortIcon>
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-itemtable>
+                    <tr>
+                        <td style="width:33%; min-width:10rem;"><span class="p-column-title">title</span>
+                            {{itemtable.title}}
+                        </td>
+                        <td style="width:33%; min-width:10rem;"><span class="p-column-title">categorie</span>
+                            {{itemtable.categorie.name}}
+                        </td>
+                        <td style="width:33%; min-width:10rem;"><span class="p-column-title">created_at</span>
+                            {{dateFormat(itemtable.created_at) }}
+                        </td>
+                        <td *ngIf="itemtable.active" style="width:33%; min-width:10rem;"><span class="p-column-title">activo</span>
+                            <p-tag severity="success" value="Activo"/>
+                        </td>
+                        <td *ngIf="!itemtable.active" style="width:33%; min-width:10rem;"><span class="p-column-title">activo</span>
+                            <p-tag severity="info" value="Inactivo"/>
+                        </td>
+                        <td>
+                            <div class="flex">
+                               
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    pTooltip="Editar Propuesta"
+                                    tooltipPosition="bottom"
+                                    class="p-button-rounded p-button-text p-button-success mr-0"
+                                    (click)="edit(itemtable)"></button>
+                                <button pButton pRipple icon="pi pi-trash"
+                                    pTooltip="Eliminar propuesta"
+                                    tooltipPosition="left"
+                                    class="p-button-rounded p-button-text p-button-danger mr-0"
+                                    (click)="confirmDelete(itemtable)"
+                                    ></button>
+                                  <button pButton pRipple 
+                                    pTooltip="Mensajes" 
+                                    icon="pi pi-messages"
+                                    class="p-button-rounded p-button-text p-button-primary mr-0"
+                                    ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog [(visible)]="showDialog" [style]="{width: '450px'}" header='{{editar ? "EDITAR PROPUESTA" : "NUEVA PROPUESTA"}}'
+            [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <app-widget-input-text nombre="title" label="Titulo" tipo="text" placeholder="Título"
+                    [formGroup]="form"></app-widget-input-text>
+
+               <!-- <app-widget-input-text nombre="categorie" label="Categoría" tipo="text" placeholder="Categoría"
+                    [formGroup]="form"></app-widget-input-text>-->
+
+                <app-widget-select nombre="categorie" label="Categoria" placeholder="Categoria"
+                        [formGroup]="form" [options] = "categories"></app-widget-select>
+
+                <app-widget-input-textarea nombre="description" label="Descripción" disabled=false
+                    placeholder="Escribe la descripción de la propuesta" [formGroup]="form"></app-widget-input-textarea>
+            
+                    <div class="input-switch-item">
+                        <app-widget-input-switch nombre="active" label="Activa" placeholder="Activa"
+                        [formGroup]="form"></app-widget-input-switch>
+                    </div>
+
+                    <div class="flex flex-wrap align-items-center">
+                    
+                        <p-card *ngIf="!editar">
+                            <h6>{{title}}</h6>
+                            <img
+                                *ngIf="previsualizacion"
+                                [src]="previsualizacion"
+                                (click)="triggerFileInput()"
+                                alt=""
+                                width="250"
+                            />
+                            <img
+                                *ngIf="!imagenSelected"
+                                [alt]=""
+                                (click)="triggerFileInput()"
+                                src="../../../assets/img/default-image.jpg"
+                                width="350"
+                            />
+                            <div class="row">
+                                <div class="col" style="display: none">
+                                  <input #fileInput (change)="capturarFile($event)" type="file" accept="image/*" />
+                                </div>
+                                <div class="col" *ngIf="imagenSelected">
+                                  <button
+                                    pButton
+                                    pRipple
+                                    label=""
+                                    icon="pi pi-trash"
+                                    class="p-button-danger"
+                                    (click)="clearImage()"
+                                  ></button>
+                                </div>
+                            </div>
+                        </p-card>
+
+                        <p-card *ngIf="editar">
+                            <h6>Imagen</h6>
+                            <img
+                                *ngIf="!newImage"
+                                [src]="previewImgage()"
+                                (click)="triggerFileInput()"
+                                alt=""
+                                width="250"
+                            />
+                            <img
+                                *ngIf="!imagenSelected && newImage"
+                                [alt]=""
+                                (click)="triggerFileInput()"
+                                src="../../../assets/img/default-image.jpg"
+                                width="350"
+                            />
+
+                            <img
+                                *ngIf="imagenSelected && newImage"
+                                [alt]=""
+                                (click)="triggerFileInput()"
+                                [src]="previsualizacion"
+                                width="350"
+                            />
+                            <div class="row">
+                                <div class="col" style="display: none">
+                                  <input #fileInput (change)="capturarFile($event)" type="file" />
+                                </div>
+                                <div class="col" *ngIf="imagenSelected">
+                                  <button
+                                    pButton
+                                    pRipple
+                                    label=""
+                                    icon="pi pi-trash"
+                                    class="p-button-danger"
+                                    (click)="clearImage()"
+                                  ></button>
+                                </div>
+                            </div>
+                        </p-card>
+                 
+                </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialogNew()"  [disabled]="saving"></button>
+                <button *ngIf="!editar" pButton pRipple label="Guardar" [icon]="iconButton" class="p-button-text"
+                    (click)="save()" [disabled]="saving" [loading]="loading"></button>
+                <button *ngIf="editar" pButton pRipple label="Editar" icon="pi pi-save" class="p-button-text"
+                    (click)="editForm()"   [disabled]="saving" [loading]="loading"></button>
+            </ng-template>
+        </p-dialog>
+        <p-confirmDialog #cd>
+    <ng-template pTemplate="headless" let-message>
+        <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+            <div class="border-circle {{iconColor}} inline-flex justify-content-center align-items-center h-6rem w-6rem">
+                <i class="{{iconToAsk}} text-5xl"></i>
+            </div>
+            <span class="font-bold text-2xl block mb-2 mt-4">
+                {{ message.header }}
+            </span>
+            <p class="mb-0">{{ message.message }}</p>
+            <div class="flex align-items-center gap-2 mt-4">
+                <button 
+                    pButton 
+                    label="Aceptar" 
+                    (click)="cd.accept()" 
+                    class="w-8rem">
+                </button>
+                <button 
+                    pButton 
+                    label="Cancelar" 
+                    (click)="cd.reject()" 
+                    class="p-button-outlined w-8rem ">
+                </button>
+            </div>
+        </div>
+    </ng-template>
+        </p-confirmDialog>
+
+</div>
+</div>
+

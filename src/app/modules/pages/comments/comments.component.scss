@@ -1,0 +1,122 @@
+:host ::ng-deep {
+  .custom-add-button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid #6498cd;
+    border-radius: 3px;
+    background-color: #5f9dda;
+    cursor: pointer;
+    margin-right: 1rem;
+    
+    &:hover {
+      background-color: #4a8ac9;
+      border-color: #5389be;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.15rem rgba(100, 152, 205, 0.5);
+    }
+  }
+  
+  .clean-table {
+    border: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    
+    .p-datatable-thead > tr > th {
+      background-color: #97c2ed;
+      border-bottom: 1px solid #414b56;
+      color: #495057;
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+    }
+    
+    .p-datatable-tbody > tr {
+      transition: none;
+      
+      &:hover {
+        background-color: transparent !important;
+      }
+      
+      > td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f2f2f2;
+      }
+    }
+    
+    .p-button-rounded {
+      width: 2.5rem;
+      height: 2.5rem;
+      opacity: 0.8;
+      
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  
+  .comment-dialog {
+    .p-dialog-content {
+      padding: 1.5rem;
+    }
+    
+    .field {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #495057;
+    }
+    
+    .p-inputtext {
+      padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+      
+      &:focus {
+        border-color: #5f9dda;
+        box-shadow: 0 0 0 0.15rem rgba(100, 152, 205, 0.25);
+      }
+    }
+    
+    .p-input-icon-left > i {
+      left: 0.75rem;
+      color: #6c757d;
+    }
+  }
+  
+  .card {
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: none;
+  }
+  
+  .p-toast {
+    .p-toast-message {
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .p-confirm-dialog {
+    .p-dialog-content {
+      padding: 1.5rem;
+    }
+  }
+  
+  .readonly-field {
+    background-color: #2d3844;
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+  
+  .form-info-text {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+  }
+}
+

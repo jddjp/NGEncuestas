@@ -1,0 +1,289 @@
+
+<p-card class="mb-4 shadow-2 rounded-xl">
+  <ng-template pTemplate="header">
+  <div class="flex justify-between align-items-center px-3 py-2">
+    <span class="text-lg font-semibold">Biografía</span>
+    <button
+        *ngIf="!editar"
+        pButton
+        pRipple
+        label="Editar"
+        icon="pi pi-pencil"
+        class="p-button-text"
+        (click)="editForm()"
+        [disabled]="saving"
+        [loading]="loading"
+    ></button>
+        <div *ngIf="editar" class="row">
+            <button
+            pButton
+            pRipple
+            label="Guardar"
+            icon="pi pi-save"
+            class="p-button-text"
+            (click)="save()"
+            [disabled]="saving"
+            [loading]="loading"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Cancelar"
+            icon="pi pi-times"
+            class="p-button-text"
+            (click)="cancelEdit()"
+            [disabled]="saving"
+        ></button>
+        </div>
+  </div>
+</ng-template>
+  <ng-template pTemplate="content">
+<div class="grid">
+    <p-toast></p-toast>
+  
+    <div class="col-12 md:col-3">
+      <p-card *ngIf="loadingImage">
+        <p-progressSpinner 
+        styleClass="w-4rem h-4rem" 
+        strokeWidth="8" 
+        fill="var(--surface-ground)" 
+        animationDuration=".5s" />
+      </p-card>
+      
+        <p-card *ngIf="!loadingImage">
+                    <img
+                        [loading]="true" 
+                        *ngIf="!newImage"
+                        [src]="previewImgage()"
+                        (click)="triggerFileInput()"
+                        alt=""
+                        pTooltip="Haz clic para cambiar de imagen"
+                        style="cursor: pointer;"
+                        width="150"
+                    />
+                  
+                    <img
+                        *ngIf="imagenSelected && newImage"
+                        [alt]=""
+                        pTooltip="Haz clic para cambiar de imagen"
+                        style="cursor: pointer;"
+                        (click)="triggerFileInput()"
+                        [src]="previsualizacion"
+                        width="150"
+                    />
+                    <div class="row">
+                        <div class="col" style="display: none">
+                          <input #fileInput (change)="capturarFile($event)" type="file" accept="image/*" />
+                        </div>
+                        
+                    </div>
+        </p-card>
+    </div>
+    <div class="col-12 md:col-4" *ngIf="editar">
+     
+        <app-widget-input-textarea
+            nombre="career"
+            label="Trayectoria"
+            tipo="text"
+            rows="8"
+            placeholder="Trayectoria"
+            [formGroup]="form"
+        ></app-widget-input-textarea>
+        <app-widget-input-textarea 
+            nombre="vision"
+            label="Visión"
+            tipo="text"
+            rows="8"
+            placeholder="Visión"
+            [formGroup]="form"
+        ></app-widget-input-textarea>
+        
+        
+    </div>
+    <div [class]="editar ? 'col-12 md:col-5' : 'col-12 md:col-9'">
+        <br>
+        <p-card header="Trayectoria"  *ngIf="!editar">
+            <p class="m-0">
+                {{form.value.career}}
+            </p>
+
+        </p-card>
+        <br>
+        <p-card header="Visión"  *ngIf="!editar">
+            <p class="m-0">
+                {{form.value.vision}}
+            </p>
+        </p-card>
+        <br>
+        <div>
+            
+              <!-- Columna 1: Cargos Desempeñados -->
+              <div class="flex-column">
+                <div class="row"   *ngIf="editar" style="display: flex; gap: 10px;">
+            <button  pButton type="button" label="Añadir Cargo"  class="p-mr-3" icon="pi pi-plus" (click)="addPosition()"></button>
+            <p-button  class="p-mr-3" label="Remover" [raised]="true"  icon="pi pi-minus" severity="warning" (click)="removePosition()" />
+        </div>
+        <br>
+                <p-orderList 
+                  [value]="position"
+                  [listStyle]="{ 'max-height': '10rem' }"
+                  header="Cargos Desempeñados"
+                  (onSelectionChange)="onSelectionChangePo($event)"
+                  [dragdrop]="true">
+                  
+                  <ng-template let-award pTemplate="item">
+                    <div class="flex flex-wrap p-2 align-items-center gap-3">
+                      <i [class]="award.icon"></i>
+                      <div class="flex-1 flex flex-column gap-2">
+                        <span class="font-bold">{{ award.name }}</span>
+                        <div class="flex align-items-center gap-2">
+                          <span>{{ award.description }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-orderList>
+
+                
+              </div>
+          <div class="row"   *ngIf="editar" style="display: flex; gap: 10px;">
+            <button  pButton type="button" label="Añadir Premio" icon="pi pi-plus" (click)="addAward()"></button>
+            <p-button label="Remover" [raised]="true"  icon="pi pi-minus" severity="warning" (click)="removeAward()" />
+        </div>
+        <br>
+              <!-- Columna 2: Premios y Distinciones -->
+              <div class="flex-column">
+                <p-orderList 
+                  [value]="awards"
+                  [listStyle]="{ 'max-height': '10rem' }"
+                  header="Premios y Distinciones"
+                  (onSelectionChange)="onSelectionChange($event)"
+                  [dragdrop]="true">
+                  
+                  <ng-template let-award pTemplate="item">
+                    <div class="flex flex-wrap p-2 align-items-center gap-3">
+                      <i [class]="award.icon"></i>
+                      <div class="flex-1 flex flex-column gap-2">
+                        <span class="font-bold">{{ award.name }}</span>
+                        <div class="flex align-items-center gap-2">
+                          <span>{{ award.description }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </p-orderList>
+              </div>
+            
+          </div>
+          
+        
+    </div>
+        
+   
+
+  <!-- <ng-template pTemplate="footer">
+        <button
+        *ngIf="!editar"
+        pButton
+        pRipple
+        label="Editar"
+        icon="pi pi-pencil"
+        class="p-button-text"
+        (click)="editForm()"
+        [disabled]="saving"
+        [loading]="loading"
+    ></button>
+        <div *ngIf="editar" class="row">
+            <button
+            pButton
+            pRipple
+            label="Guardar"
+            icon="pi pi-save"
+            class="p-button-text"
+            (click)="save()"
+            [disabled]="saving"
+            [loading]="loading"
+        ></button>
+        <button
+            pButton
+            pRipple
+            label="Cancelar"
+            icon="pi pi-times"
+            class="p-button-text"
+            (click)="cancelEdit()"
+            [disabled]="saving"
+        ></button>
+        </div>
+      
+    </ng-template>-->
+
+    <p-dialog [(visible)]="showDialog" [style]="{width: '450px'}" header= "NUEVO PREMIO"
+    [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <app-widget-input-text nombre="name" label="Titulo" tipo="text" placeholder="Titulo"
+            [formGroup]="formAward"></app-widget-input-text>
+
+        <app-widget-input-textarea nombre="description" label="Descripcion" disabled=false
+            placeholder="Escribe la descripcion del premio o distincion" [formGroup]="formAward"></app-widget-input-textarea>
+        
+            <div class="icon-selector">
+                <p>Selecciona un ícono</p>
+                
+                <div class="icon-list">
+                  <button
+                    *ngFor="let icon of icons"
+                    class="icon-item"
+                    [ngClass]="{'selected': selectedIcon === icon}"
+                    (click)="selectIcon(icon)"
+                  >
+                    <i [class]="icon"></i>
+                  </button>
+                </div>
+            
+              </div>
+        </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialogNew()"></button>
+        <button *ngIf="editar" pButton pRipple label="Guardar" [icon]="iconButton" class="p-button-text"
+            (click)="saveAward()"  [loading]="loading"></button>
+    </ng-template>
+    </p-dialog>
+
+    <p-dialog [(visible)]="showDialogPosition" [style]="{width: '450px'}" header= "NUEVO CARGO"
+    [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+        <app-widget-input-text nombre="name" label="Titulo" tipo="text" placeholder="Titulo"
+            [formGroup]="formAward"></app-widget-input-text>
+
+        <app-widget-input-textarea nombre="description" label="Descripcion" disabled=false
+            placeholder="Escribe la descripcion del cargo" [formGroup]="formAward"></app-widget-input-textarea>
+    
+            <div class="icon-selector">
+                <p>Selecciona un ícono</p>
+                
+                <div class="icon-list">
+                  <button
+                    *ngFor="let icon of icons"
+                    class="icon-item"
+                    [ngClass]="{'selected': selectedIcon === icon}"
+                    (click)="selectIcon(icon)"
+                  >
+                    <i [class]="icon"></i>
+                  </button>
+                </div>
+            
+              </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+            (click)="hideDialogNew()"></button>
+        <button *ngIf="editar" pButton pRipple label="Guardar" [icon]="iconButton" class="p-button-text"
+            (click)="savePosition()"  [loading]="loading"></button>
+    </ng-template>
+    </p-dialog>
+</div>
+</ng-template>
+</p-card>

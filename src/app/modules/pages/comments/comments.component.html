@@ -1,0 +1,101 @@
+<div class="card">
+  <div class="flex justify-content-between align-items-center mb-3">
+    <h3>Gestión de Comentarios</h3>
+    <button pButton label="Agregar Comentario" icon="pi pi-plus" class="custom-add-button" (click)="openNewCommentModal()"></button>
+  </div>
+
+  <div class="mt-4">
+    <p-table [value]="comments" styleClass="p-datatable-sm clean-table" [paginator]="true" [rows]="10" 
+      [showCurrentPageReport]="true" [rowsPerPageOptions]="[10,25,50]"
+      responsiveLayout="scroll" [loading]="loading">
+      
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Autor</th>
+          <th>Comentario</th>
+          <th>Fecha</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="body" let-comment>
+        <tr>
+          <td>{{ comment.author }}</td>
+          <td>{{ comment.text }}</td>
+          <td>{{ comment.createdAt?.toDate ? (comment.createdAt.toDate() | date:'medium') : (comment.createdAt | date:'medium') }}</td>
+          <td>
+            <div class="flex justify-content-center">
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" 
+                pTooltip="Editar comentario" tooltipPosition="top"
+                (click)="editComment(comment)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" 
+                pTooltip="Eliminar comentario" tooltipPosition="top"
+                (click)="confirmDelete(comment)"></button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center p-4">
+            <i class="pi pi-comments" style="font-size: 2rem; color: #ddd;"></i>
+            <p>Aún no hay comentarios</p>
+          </td>
+        </tr>
+      </ng-template>
+      
+      <ng-template pTemplate="paginatorleft">
+        <div class="text-muted">Total: {{comments.length}} comentario(s)</div>
+      </ng-template>
+      <ng-template pTemplate="paginatorright">
+        <div class="flex align-items-center">
+          <button pButton type="button" icon="pi pi-download" label="Exportar"
+            class="p-button-text p-button-sm" (click)="exportToCSV()"></button>
+        </div>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Modal para agregar/editar comentarios -->
+<p-dialog 
+  [(visible)]="displayModal" 
+  [style]="{width: '500px'}" 
+  [header]="editMode ? 'Editar Comentario' : 'Nuevo Comentario'"
+  [modal]="true" 
+  styleClass="p-fluid comment-dialog">
+  
+  <form [formGroup]="commentForm" (ngSubmit)="saveComment()">
+    <div class="field">
+      <label for="author">Autor</label>
+      <div class="p-input-icon-left w-full">
+        <i class="pi pi-user"></i>
+        <input id="author" type="text" pInputText formControlName="author" required [autofocus]="!editMode" class="w-full" [ngClass]="{'readonly-field': editMode}" />
+      </div>
+      <small *ngIf="editMode" class="form-info-text">El autor no puede ser modificado.</small>
+      <small class="p-error" *ngIf="commentForm.get('author')?.invalid && commentForm.get('author')?.touched">
+        El autor es requerido.
+      </small>
+    </div>
+    
+    <div class="field">
+      <label for="text">Comentario</label>
+      <div class="p-input-icon-left w-full">
+        <i class="pi pi-comment"></i>
+        <textarea id="text" pInputTextarea formControlName="text" required rows="5" class="w-full"></textarea>
+      </div>
+      <small class="p-error" *ngIf="commentForm.get('text')?.invalid && commentForm.get('text')?.touched">
+        El comentario es requerido.
+      </small>
+    </div>
+    
+    <div class="flex justify-content-end">
+      <button type="button" pButton icon="pi pi-times" (click)="closeModal()" label="Cancelar" class="p-button-text mr-2"></button>
+      <button type="submit" pButton icon="pi pi-check" [label]="editMode ? 'Actualizar' : 'Guardar'" [disabled]="commentForm.invalid"></button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog header="Confirmación" icon="pi pi-exclamation-triangle" acceptLabel="Eliminar" rejectLabel="Cancelar"></p-confirmDialog>

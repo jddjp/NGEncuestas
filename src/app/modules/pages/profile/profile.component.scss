@@ -1,0 +1,44 @@
+
+
+:host ::ng-deep {
+    .p-orderlist-controls{
+      display: none;
+    }
+  }
+  
+  $primary-color: #007bff;
+  $hover-color: #f0f0f0;
+  $selected-bg-color: #e6f7ff;
+  $border-color: #ccc;
+  
+  // Estilo base para el selector de iconos
+  .icon-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .icon-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+  
+      .icon-item {
+        font-size: 2em;
+        padding: 10px;
+        background-color: transparent;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        cursor: pointer;
+  
+        &.selected {
+          border-color: $primary-color;
+          background-color: $selected-bg-color;
+          color: #000;
+        }
+  
+        &:hover {
+          background-color: $hover-color;
+        }
+      }
+    }
+  }
