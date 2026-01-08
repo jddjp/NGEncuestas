@@ -259,6 +259,10 @@ export class ProfileComponent {
           this.uidSettings.img_about_me = image_file.toString()
           this.uidSettings.uid  = "app_settings"
           this.loadingImage = false
+          this.form.value.photoUrl = this.url_about_me
+         // console.log(this.url_about_me)
+          console.log(this.form.value)
+          this.profileService.updateProfile(this.form.value)
           await this.settingsService.updateSettings(this.uidSettings)
           this.messageService.add({
             severity: "success",

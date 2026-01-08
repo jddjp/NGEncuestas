@@ -10,7 +10,7 @@
     <div class="flex flex-column md:flex-row align-items-center gap-4">
       <div class="flex flex-column w-full md:w-6">
         <span class="p-input-icon-left w-full">
-          <input type="file" class="p-inputtext w-full" (change)="onFileSelected($event)" />
+          <input  #fileInput type="file" class="p-inputtext w-full" (change)="onFileSelected($event)" [accept]="typeFile"  />
         </span>
         <small *ngIf="selectedFile" class="text-primary">Archivo seleccionado: {{selectedFile.name}}</small>
       </div>
@@ -19,12 +19,35 @@
                    placeholder="Seleccionar categoría" optionLabel="name" class="mb-2"></p-dropdown>
         
         <div *ngIf="showDescriptionInput" class="mt-2">
+          <small class="text">Titulo para el evento</small>
           <span class="p-input-icon-left w-full">
-            <i class="pi pi-comment"></i>
             <input type="text" pInputText class="w-full" 
-                  placeholder="Descripción"
-                  [(ngModel)]="description" />
+                  placeholder="Título"
+                  [(ngModel)]="titulo" />
           </span>
+            <div class="form-container">
+            <div class="input-container">
+              <small class="text">Descripción para el evento</small>
+              <span class="p-input-icon-left w-full">
+                <input type="text" pInputText class="w-full" placeholder="Descripción" [(ngModel)]="description" />
+              </span>
+            </div>
+            <div class="input-container">
+              <small class="text">Ubicación para el evento</small>
+              <span class="p-input-icon-left w-full">
+                <input type="text" pInputText class="w-full" placeholder="Ubicacion" [(ngModel)]="location" />
+              </span>
+            </div>
+          </div>
+           <small class="text">Selecciona una fecha para el evento</small>
+          <br>
+            <div class="flex-auto">
+              <p-calendar 
+                  [(ngModel)]="eventDate" 
+                  [showIcon]="true" 
+                  inputId="buttondisplay" 
+                  [showOnFocus]="false" />
+          </div>
         </div>
       </div>
       <div class="flex align-items-center">
@@ -57,8 +80,8 @@
   </div>
 
   <div *ngIf="!loading && filteredMediaList.length === 0" class="surface-card p-5 text-center">
-    <i class="pi pi-image text-4xl text-500 mb-3"></i>
-    <div class="text-900 font-bold text-xl mb-2">No hay archivos multimedia</div>
+    <i class="pi pi-image text-4xl text-200 mb-3"></i>
+    <div class="text font-bold text-xl mb-2">No hay archivos multimedia</div>
   </div>
 
   <div *ngIf="!loading && filteredMediaList.length > 0" class="grid">
@@ -86,7 +109,7 @@
           
           <!-- For unknown types -->
           <div *ngIf="!media.url && media.category !== 'event'" class="w-full flex align-items-center justify-content-center bg-gray-100" style="height: 180px;">
-            <i class="pi pi-file text-4xl text-500"></i>
+            <i class="pi pi-file text-4xl text-200"></i>
           </div>
           
           <!-- Category badge -->
@@ -99,10 +122,10 @@
         </div>
         
         <div class="p-3">
-          <div *ngIf="media.category === 'event'" class="text-500 font-medium mb-1 text-overflow-ellipsis overflow-hidden text-xs">
+          <div *ngIf="media.category === 'event'" class="text-200 font-medium mb-1 text-overflow-ellipsis overflow-hidden text-xs">
             Evento
           </div>
-          <div *ngIf="media.category !== 'event'" class="text-500 text-xs mb-2">
+          <div *ngIf="media.category !== 'event'" class="text-200 text-xs mb-2">
             {{getFileName(media.url)}}
           </div>
 
@@ -133,12 +156,34 @@
           [modal]="true"
           styleClass="p-fluid">
   <div class="field">
+    <label for="description">Título</label>
+    <textarea id="description" rows="3" pInputTextarea
+              [(ngModel)]="eventTitle"
+              placeholder="Título del evento"
+              class="w-full"></textarea>
+  </div>
+   <div class="field">
     <label for="description">Descripción</label>
     <textarea id="description" rows="3" pInputTextarea
               [(ngModel)]="eventDescription"
               placeholder="Descripción del evento"
               class="w-full"></textarea>
   </div>
+   <div class="field">
+    <label for="description">Ubicación</label>
+    <textarea id="description" rows="3" pInputTextarea
+              [(ngModel)]="eventLocation"
+              placeholder="Ubicación del evento"
+              class="w-full"></textarea>
+  </div>
+  <div class="flex-auto">
+              <p-calendar
+                  appendTo="body"
+                  [(ngModel)]="fechaEvento" 
+                  [showIcon]="true" 
+                  inputId="buttondisplay" 
+                  [showOnFocus]="false" />
+          </div>
   <ng-template pTemplate="footer">
     <button pButton type="button" label="Cancelar"
             icon="pi pi-times" class="p-button-text"

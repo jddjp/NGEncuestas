@@ -1,6 +1,6 @@
 <div class="layout-topbar">
     <a class="layout-topbar-logo">
-       <img  src="assets/img/icono_app.png" alt="logo" [routerLink]="['/dashboard/proposals']" pTooltip="Ir a Dashboard">
+       <img  src="assets/img/logo.png" alt="logo" [routerLink]="['/dashboard/proposals']" pTooltip="Ir a Dashboard">
        <span *ngIf="!layoutService.state.staticMenuDesktopInactive">CAMPAÑA</span>
        <button #menubutton class="p-link layout-menu-button layout-topbar-button" 
     (click)="layoutService.onMenuToggle()">

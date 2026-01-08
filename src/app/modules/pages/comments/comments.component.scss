@@ -2,15 +2,16 @@
   .custom-add-button {
     display: inline-block;
     padding: 0.5rem 1rem;
-    border: 1px solid #6498cd;
+    border: 1px solid #e4aa43;
     border-radius: 3px;
-    background-color: #5f9dda;
+    background-color: #e4aa43;
     cursor: pointer;
+    color:black;
     margin-right: 1rem;
     
     &:hover {
-      background-color: #4a8ac9;
-      border-color: #5389be;
+      background-color: #fae3bb;
+      border-color: #fae3bb;
     }
     
     &:focus {
@@ -24,9 +25,9 @@
     border-radius: 6px;
     
     .p-datatable-thead > tr > th {
-      background-color: #97c2ed;
-      border-bottom: 1px solid #414b56;
-      color: #495057;
+      //background-color: #97c2ed;
+      //border-bottom: 1px solid #414b56;
+     // color: #495057;
       font-weight: 600;
       padding: 0.75rem 1rem;
     }
@@ -119,4 +120,3 @@
     display: block;
   }
 }
-

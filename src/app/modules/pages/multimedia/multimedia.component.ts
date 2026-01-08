@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { MultimediaService } from 'src/app/campaigns/service/multimedia.service';
 import { Multimedia, Category, MEDIA_CATEGORIES, MultimediaCategory, MultimediaType } from 'src/app/models/multimedia';
@@ -17,9 +17,14 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   uploadLoading = false;
 
   description: string = '';
+  location:string ='';
+  titulo:string ='';
   showDescriptionInput = false;
   editingEvent: Multimedia | null = null;
   eventDescription: string = '';
+  eventTitle: string = '';
+  eventLocation: string = '';
+  fechaEvento: Date | null = null;
   editEventDialogVisible: boolean = false;
 
   categories: Category[] = MEDIA_CATEGORIES;
@@ -27,7 +32,9 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   activeTabIndex = 0;
 
   private mediaSubscription?: Subscription;
-
+  typeFile ="image/*"
+  eventDate: Date | undefined;
+  @ViewChild('fileInput') fileInput: any;
   constructor(
     private multimediaService: MultimediaService,
     private messageService: MessageService,
@@ -63,12 +70,34 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   onCategoryChange() {
     this.showDescriptionInput = this.selectedCategory?.id === 'event';
+
+    if (this.selectedCategory?.id == 'photo') {
+      this.typeFile ="image/*"
+    }
+     if (this.selectedCategory?.id == 'video') {
+      this.typeFile ="video/*"
+    }
+    if (this.selectedCategory?.id == 'event') {
+      this.typeFile ="image/*,video/*"
+    }
+    if (this.fileInput && this.selectedCategory) {
+      this.fileInput.nativeElement.value = '';  // Limpiar el valor del input de archivo
+    }
+    this.selectedFile = null
+   // console.log('Selected category:', this.selectedCategory.id);
   }
 
   async upload() {
     if (!this.selectedFile || !this.selectedCategory) return;
     this.uploadLoading = true;
-    
+    if(this.eventDate === undefined && this.selectedCategory.id === 'event'){
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Por favor selecciona una fecha para el evento.'
+      });
+      return
+    }
     try {
       const mediaType: MultimediaType = this.selectedFile.type.startsWith('image/') 
         ? 'image' 
@@ -79,7 +108,10 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       const metadata = { 
         category: this.selectedCategory.id,
         description: this.description,
-        mediaType
+        mediaType,
+        date: this.eventDate,
+        title: this.titulo,
+        location: this.location
       };
       
       const result = await this.multimediaService.uploadMedia(this.selectedFile, metadata);
@@ -92,6 +124,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
       this.selectedFile = null;
       this.description = '';
+      this.location = '';
+      this.titulo = '';
+      if (this.fileInput ) {
+        this.fileInput.nativeElement.value = '';  // Limpiar el valor del input de archivo
+      }
       
     } catch (error) {
       console.error('Error uploading file:', error);
@@ -112,6 +149,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       this.multimediaService.getAllMedia()
         .then(media => {
           this.mediaList = media;
+          this.multimediaService.getAllEvents()
+            .then(events => {
+              this.mediaList = [...this.mediaList, ...events];
+              console.log('Loaded media:', this.mediaList);
+            })
           this.loading = false;
         })
         .catch(err => {
@@ -137,6 +179,29 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       accept: async () => {
         this.loading = true;
         try {
+          if(media.category === 'event'){
+            const success = await this.multimediaService.deleteEvento(
+            media.id || '',
+            media.url || ''
+          );
+          if (success) {
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: 'Eliminado', 
+              detail: 'El evento ha sido eliminado correctamente' 
+            });
+            
+            this.mediaList = this.mediaList.filter(m => {
+              if (media.id && m.id) {
+                return m.id !== media.id;
+              }
+              return m.url !== media.url;
+            });
+          } else {
+            throw new Error('Failed to delete');
+          }
+          }
+          else{
           const success = await this.multimediaService.deleteMedia(
             media.id || '',
             media.url || ''
@@ -156,7 +221,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
             });
           } else {
             throw new Error('Failed to delete');
-          }
+          }}
         } catch (error) {
           console.error('Error deleting media:', error);
           this.messageService.add({ 
@@ -191,7 +256,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   // Filename from URL
   getFileName(url: string | null): string {
     if (!url) return 'Archivo';
-    const parts = url.split('/');
+    const decodificado: string = decodeURIComponent(url);
+    const parts = decodificado.split('/');
     const fullName = parts[parts.length - 1];
     return fullName.split('?')[0];
   }
@@ -224,18 +290,26 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     }
   }
 
-  editEventDescription(media: Multimedia) {
+  editEventDescription(media: any) {
     if (media.category !== 'event' || !media.id) return;
     
     this.editingEvent = media;
+    console.log('Editing event:', media);
     this.eventDescription = media.description || '';
+    this.eventTitle = media.title || '';
+    this.eventLocation = media.location_name || '';
+   
+   const milliseconds = media.date.seconds * 1000 + media.date.nanoseconds / 1000000;
+    this.fechaEvento = new Date(milliseconds);
     this.editEventDialogVisible = true;
+
+    console.log('Event description to edit:', this.fechaEvento);
   }
 
   saveEventDescription() {
     if (!this.editingEvent || !this.editingEvent.id) return;
     
-    this.multimediaService.updateEventDescription(this.editingEvent.id, this.eventDescription)
+    this.multimediaService.updateEventDescription(this.editingEvent.id, this.eventDescription, this.eventTitle,this.eventLocation,this.fechaEvento)
       .then(() => {
         if (this.editingEvent) {
           this.editingEvent.description = this.eventDescription;
@@ -243,7 +317,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
         this.messageService.add({
           severity: 'success',
           summary: 'Éxito',
-          detail: 'Descripción actualizada correctamente'
+          detail: 'Evento actualizado correctamente'
         });
         this.editEventDialogVisible = false;
       })

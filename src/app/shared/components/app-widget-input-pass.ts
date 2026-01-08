@@ -5,7 +5,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   selector: 'app-widget-input-pass',
   template: `
     <div class="mb-3 col-12 p-0">
-      <label [for]="nombre" class="block text-900 text-xl mb-2">{{ label }}</label>
+      <label [for]="nombre" class="block text text-xl mb-2">{{ label }}</label>
       <p-password 
       [id]="nombre" 
       [formControl]="control"  

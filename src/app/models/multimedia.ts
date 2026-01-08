@@ -17,9 +17,22 @@ export interface Category {
 
 export interface Event {
   id?: string;
+  created_at: Date;
+  cover_image_url: string;
+  date: Date;
+  description: string;
+  location_name: string;
+  status: string;
+  title: string;
+  type?: MultimediaType;
+}
+
+export interface Gallery {
+  id?: string;
   description: string;
   url: string;
   type: MultimediaType;
+  //date: Date;
 }
 
 export const MEDIA_CATEGORIES: Category[] = [

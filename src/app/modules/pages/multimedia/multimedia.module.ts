@@ -15,7 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-
+import { CalendarModule } from 'primeng/calendar';
 @NgModule({
   declarations: [
     MultimediaComponent
@@ -35,7 +35,8 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
     DialogModule,
     InputTextareaModule,
     AngularFireStorageModule,
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    CalendarModule
   ],
   providers: []
 })

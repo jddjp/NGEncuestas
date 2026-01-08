@@ -27,7 +27,7 @@ import { CategoriesService } from "src/app/campaigns/service/categories.service"
 @Component({
   providers: [MessageService, ConfirmationService],
   templateUrl: "./proposals.component.html",
-  styleUrl: "./proposals.component.scss",
+  styleUrls: ["./proposals.component.scss"],
 })
 export class ProposalsComponent {
   wait = true;

@@ -163,3 +163,25 @@ input[type="file"] {
   transition: color 0.2s, opacity 0.2s, transform 0.2s;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25));
 }
+
+::ng-deep input::placeholder {
+  color: rgb(201, 201, 201);
+}
+
+::ng-deep .pi {
+  color: #000000;
+}
+
+.form-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Espacio entre las columnas */
+}
+
+.input-container {
+  flex: 1;
+}
+
+.w-full {
+  width: 100%;
+}
