@@ -1,0 +1,33 @@
+<div class="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
+    <div class="flex flex-column align-items-center justify-content-center">
+        <div style="border-radius:56px; padding:0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%);">
+            <div class="w-full surface-card py-8 px-5 sm:px-8" style="border-radius:53px">
+                <div class="text-center mb-5">
+                    <img src="assets/img/logo.png" alt="Image" height="150" class="mb-3">
+                    <div class="text text-3xl font-medium mb-3">Responder Encuesta</div>
+                    <span class="text font-medium" *ngIf="encuesta">{{ encuesta.titulo }}</span>
+                </div>
+
+                <div *ngIf="encuesta">
+                    <form (ngSubmit)="onSubmit()">
+                        <!-- Aquí irán las preguntas de la encuesta -->
+                        <div class="mb-4" *ngFor="let pregunta of encuesta.preguntas; let i = index">
+                            <p-card [header]="'Pregunta ' + (i + 1)">
+                                <p class="mb-3">{{ pregunta.texto }}</p>
+                                <!-- Agregar controles según el tipo de pregunta -->
+                            </p-card>
+                        </div>
+
+                        <div class="flex justify-content-center mt-4">
+                            <button pButton pRipple type="submit" label="Enviar Respuestas" class="p-button-primary p-3"></button>
+                        </div>
+                    </form>
+                </div>
+
+                <div *ngIf="!encuesta" class="text-center">
+                    <p>Cargando encuesta...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

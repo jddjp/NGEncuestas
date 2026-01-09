@@ -1,0 +1,595 @@
+.landing-container {
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+
+// Header
+.landing-header {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo-section img {
+        height: 50px;
+    }
+
+    .nav-menu {
+        display: flex;
+        gap: 2rem;
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+
+            &:hover {
+                color: #0d6efd;
+            }
+        }
+    }
+}
+
+// Selector Section
+.selector-section {
+    background: white;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #e0e0e0;
+
+    .selector-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+
+        .selector-title {
+            color: #1a5276;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+    }
+}
+
+// Banner Section
+.banner-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 2rem 0;
+
+    .banner-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    .banner-logos {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        .logo-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            .logo-text {
+                display: flex;
+                flex-direction: column;
+
+                .brand-name {
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                    color: #1a5276;
+                }
+
+                .brand-subtitle {
+                    font-size: 0.8rem;
+                    color: #666;
+                }
+            }
+        }
+
+        .date-badge {
+            background: #7dcea0;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+    }
+
+    .main-title {
+        text-align: center;
+        color: #1a5276;
+        font-size: 4rem;
+        font-weight: bold;
+        font-style: italic;
+        margin: 2rem 0;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
+
+// Results Section
+.results-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+
+    .results-header {
+        background: #7dcea0;
+        color: white;
+        text-align: center;
+        padding: 1rem 2rem;
+        border-radius: 10px 10px 0 0;
+        margin-top: -1rem;
+
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    }
+
+    .results-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .question-section {
+        text-align: center;
+        margin-bottom: 2rem;
+
+        .question-intro {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .question-main {
+            color: #1a5276;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .question-note {
+            color: #999;
+            font-size: 0.9rem;
+        }
+    }
+
+    .results-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .result-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .party-logo {
+            .logo-circle {
+                width: 70px;
+                height: 70px;
+                border: 4px solid;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: white;
+
+                span {
+                    font-weight: bold;
+                    font-size: 0.75rem;
+                }
+            }
+        }
+
+        .party-bar-container {
+            flex: 1;
+
+            .party-name-bar {
+                padding: 0.75rem 1.5rem;
+                border-radius: 5px;
+                margin-bottom: 0.25rem;
+
+                .party-name {
+                    color: white;
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                }
+            }
+
+            .party-full-name {
+                color: #666;
+                font-size: 0.85rem;
+                display: block;
+                padding-left: 1rem;
+            }
+        }
+
+        .party-percentage {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            min-width: 120px;
+            justify-content: center;
+
+            .chevron {
+                color: white;
+                font-size: 1.5rem;
+                margin-right: 0.5rem;
+            }
+
+            .percentage {
+                color: white;
+                font-weight: bold;
+                font-size: 1.5rem;
+            }
+        }
+    }
+}
+
+// Surveys Section
+.surveys-section {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+
+    .surveys-header {
+        background: #1a5276;
+        color: white;
+        text-align: center;
+        padding: 1rem 2rem;
+        border-radius: 10px 10px 0 0;
+
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    }
+
+    .surveys-grid {
+        background: white;
+        padding: 2rem;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .survey-card {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 1.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        transition: all 0.3s;
+
+        &:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .survey-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            i {
+                color: white;
+                font-size: 1.5rem;
+            }
+        }
+
+        .survey-info {
+            flex: 1;
+
+            h3 {
+                margin: 0 0 0.5rem 0;
+                color: #1a5276;
+                font-size: 1.2rem;
+            }
+
+            p {
+                margin: 0 0 0.5rem 0;
+                color: #666;
+            }
+
+            .survey-date {
+                color: #999;
+                font-size: 0.85rem;
+            }
+        }
+
+        .survey-btn {
+            min-width: 120px;
+        }
+    }
+
+    .no-surveys {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+
+        i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.1rem;
+        }
+    }
+}
+
+// Ranking Section - Gráfica Animada
+.ranking-section {
+    max-width: 1600px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+
+    .ranking-header {
+        background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+        color: white;
+        text-align: center;
+        padding: 1rem 2rem;
+        border-radius: 10px 10px 0 0;
+
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+    }
+
+    .ranking-content {
+        background: white;
+        padding: 2rem 1rem;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .ranking-controls {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+        gap: 1rem;
+    }
+
+    .ranking-chart-container {
+        display: flex;
+        align-items: stretch;
+        position: relative;
+        min-height: 450px;
+    }
+
+    .y-axis-left {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 15px 5px 40px 10px;
+        min-width: 25px;
+
+        span {
+            font-weight: bold;
+            color: #1a5276;
+            font-size: 1rem;
+            text-align: right;
+        }
+    }
+
+    .chart-wrapper {
+        flex: 1;
+        min-height: 450px;
+        position: relative;
+        margin: 0 10px 0 0;
+
+        p-chart {
+            width: 100%;
+            height: 100%;
+            display: block;
+
+            ::ng-deep canvas {
+                width: 100% !important;
+                height: 450px !important;
+                filter: drop-shadow(2px 3px 3px rgba(0, 0, 0, 0.3));
+            }
+        }
+    }
+
+    .ranking-legend-left {
+        position: relative;
+        min-width: 140px;
+        height: 450px;
+
+        .legend-item-left {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transform: translateY(-50%);
+            transition: top 0.08s linear;
+            white-space: nowrap;
+            right: 10px;
+
+            .legend-text {
+                font-weight: 600;
+                font-size: 0.85rem;
+                color: #333;
+                text-align: right;
+            }
+        }
+    }
+
+    .ranking-legend-right {
+        position: relative;
+        min-width: 130px;
+        padding: 15px 10px 40px 10px;
+
+        .legend-item-right {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transform: translateY(-50%);
+            transition: top 0.5s ease-out;
+            white-space: nowrap;
+
+            .legend-circle {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 3px solid;
+                background: white !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .legend-text {
+                font-weight: 600;
+                font-size: 0.9rem;
+                color: #333;
+            }
+        }
+    }
+
+    .ranking-search {
+        margin-top: 2rem;
+        
+        input {
+            width: 250px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+
+            &:focus {
+                outline: none;
+                border-color: #1a5276;
+            }
+
+            &::placeholder {
+                color: #999;
+            }
+        }
+    }
+}
+
+// Footer
+.landing-footer {
+    background: #1a5276;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    margin-top: 3rem;
+
+    .footer-content p {
+        margin: 0;
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .landing-header {
+        .header-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-menu {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+    }
+
+    .selector-section .selector-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .banner-section {
+        .banner-logos {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    .results-section .result-item {
+        flex-wrap: wrap;
+
+        .party-bar-container {
+            order: 3;
+            width: 100%;
+        }
+    }
+
+    .surveys-section .survey-card {
+        flex-direction: column;
+        text-align: center;
+
+        .survey-info {
+            text-align: center;
+        }
+    }
+
+    .ranking-section {
+        .ranking-chart-container {
+            flex-direction: column;
+        }
+
+        .ranking-legend-axis {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            min-width: auto;
+            padding: 1rem 0;
+
+            .legend-row {
+                flex: 0 0 auto;
+                padding: 0.5rem 1rem;
+                border-bottom: none;
+
+                .position-number {
+                    display: none;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,121 @@
+<div class="landing-container">
+    <!-- Header / Navbar -->
+    <header class="landing-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="assets/img/logo.png" alt="Logo" height="50">
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Quiénes Somos</a>
+                <a href="#" class="nav-link">Servicios</a>
+                <a href="#" class="nav-link">Encuestas</a>
+                <a href="#" class="nav-link">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Selector Section -->
+    <section class="selector-section">
+        <div class="selector-content">
+            <h2 class="selector-title">Rumbo al 2027</h2>
+            <p-dropdown [options]="estados" [(ngModel)]="estadoSeleccionado" 
+                placeholder="Selecciona un estado" optionLabel="nombre"
+                styleClass="estado-dropdown"></p-dropdown>
+        </div>
+    </section>
+
+    <!-- Banner Principal -->
+    <section class="banner-section">
+        <div class="banner-content">
+            <div class="banner-logos">
+                <div class="logo-left">
+                    <img src="assets/img/logo.png" alt="Logo" height="60">
+                    <div class="logo-text">
+                        <span class="brand-name">ENCUESTAS</span>
+                        <span class="brand-subtitle">ESTUDIOS DE OPINIÓN PÚBLICA</span>
+                    </div>
+                </div>
+                <div class="date-badge">
+                    <span>{{ fechaActual | date:'d \'DE\' MMMM yyyy' | uppercase }}</span>
+                </div>
+                <div class="logo-right">
+                    <img src="assets/img/logo.png" alt="Partner Logo" height="50">
+                </div>
+            </div>
+            
+            <h1 class="main-title">RUMBO AL 2027</h1>
+        </div>
+    </section>
+
+    <!-- Preferencias Electorales -->
+    <section class="results-section">
+        <div class="results-header">
+            <h2>PREFERENCIAS ELECTORALES POR PARTIDO</h2>
+        </div>
+        
+        <div class="results-content">
+            <div class="question-section">
+                <p class="question-intro">Si hoy fueran las elecciones para elegir gobernador(a),</p>
+                <h3 class="question-main">¿Por cuál partido votaría?</h3>
+                <p class="question-note">(Medición de partidos políticos SIN alianzas/coaliciones)</p>
+            </div>
+
+            <!-- Barras de Resultados -->
+            <div class="results-bars">
+                <div class="result-item" *ngFor="let partido of partidos">
+                    <div class="party-logo">
+                        <div class="logo-circle" [style.border-color]="partido.color">
+                            <span [style.color]="partido.color">{{ partido.siglas }}</span>
+                        </div>
+                    </div>
+                    <div class="party-bar-container">
+                        <div class="party-name-bar" [style.background]="partido.color">
+                            <span class="party-name">{{ partido.nombre }}</span>
+                        </div>
+                        <span class="party-full-name">{{ partido.nombreCompleto }}</span>
+                    </div>
+                    <div class="party-percentage" [style.background]="partido.colorPorcentaje">
+                        <span class="chevron">»</span>
+                        <span class="percentage">{{ partido.porcentaje }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Encuestas Disponibles -->
+    <section class="surveys-section">
+        <div class="surveys-header">
+            <h2>ENCUESTAS DISPONIBLES</h2>
+        </div>
+        
+        <div class="surveys-grid">
+            <div class="survey-card" *ngFor="let encuesta of encuestas">
+                <div class="survey-icon">
+                    <i class="pi pi-chart-bar"></i>
+                </div>
+                <div class="survey-info">
+                    <h3>{{ encuesta.titulo }}</h3>
+                    <p>{{ encuesta.descripcion }}</p>
+                    <span class="survey-date">{{ encuesta.fecha | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <button pButton pRipple type="button" label="Participar" 
+                    [routerLink]="['/encuestas/responder', encuesta.id]" 
+                    class="p-button-success survey-btn"></button>
+            </div>
+
+            <div *ngIf="encuestas.length === 0" class="no-surveys">
+                <i class="pi pi-inbox"></i>
+                <p>No hay encuestas disponibles en este momento.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="footer-content">
+            <p>&copy; 2026 - Todos los derechos reservados</p>
+        </div>
+    </footer>
+</div>

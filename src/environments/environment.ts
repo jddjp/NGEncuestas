@@ -3,13 +3,13 @@ export const environment = {
   production: false,
   apiService:'',
   firebaseConfig: {
-    apiKey: "AIzaSyD3HrXCUXDT1WF0R0ebXEL381tQrOlv_Pw",
-    authDomain: "campaignbuap.firebaseapp.com",
-    projectId: "campaignbuap",
-    storageBucket: "campaignbuap.firebasestorage.app",
-    messagingSenderId: "83762531470",
-    appId: "1:83762531470:web:f1cb1003e26ae53fc78ddf",
-    measurementId: "G-FD1885NH1N",
+    apiKey: "AIzaSyC2hRn4UCd6jiFoUvZKzb2Q3DpQYcQogUE",
+    authDomain: "ngestadisticas.firebaseapp.com",
+    projectId: "ngestadisticas",
+    storageBucket: "ngestadisticas.firebasestorage.app",
+    messagingSenderId: "856891950946",
+    appId: "1:856891950946:web:2142c422918fdc3ca98e3b",
+    measurementId: "G-TY5P6JEMVW",
     vapidKey: ""
  }
 };

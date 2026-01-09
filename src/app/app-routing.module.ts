@@ -20,7 +20,10 @@ const routes: Routes = [
         loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule),
         canActivate: [AuthGuard]
        },
-      { path: '**', redirectTo: '/login' },
+      { path: 'encuestas', 
+        loadChildren: () => import('./encuestas/encuestas.module').then(m => m.EncuestasModule)
+       },
+      { path: '**', redirectTo: '/encuestas' },
   ];
   
   @NgModule({
