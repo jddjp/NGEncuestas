@@ -1,0 +1,112 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
+                            (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table #dt [value]="valores" [columns]="columnasTable" responsiveLayout="scroll"
+                [rows]="10" [globalFilterFields]="['nombre','tipo','cantidad']"
+                [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
+                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
+                dataKey="id" [loading]="wait">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                        <h5 class="m-0">Administrar Valores</h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onSearch($event)" placeholder="Buscar..." class="w-full sm:w-auto" />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
+                        <th pSortableColumn="tipo">Tipo <p-sortIcon field="tipo"></p-sortIcon></th>
+                        <th pSortableColumn="cantidad">Cantidad <p-sortIcon field="cantidad"></p-sortIcon></th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-valor>
+                    <tr>
+                        <td style="width:40%; min-width:10rem;"><span class="p-column-title">Nombre</span>
+                            {{valor.nombre}}
+                        </td>
+                        <td style="width:25%; min-width:10rem;"><span class="p-column-title">Tipo</span>
+                            {{valor.tipo}}
+                        </td>
+                        <td style="width:20%; min-width:8rem;"><span class="p-column-title">Cantidad</span>
+                            {{valor.cantidad}}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-success mr-2" (click)="editRecord(valor)"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                                    (click)="deleteRecord(valor)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog [(visible)]="showInfo" [style]="{width: '450px'}" header="Detalles del Valor" [modal]="true"
+            class="p-fluid">
+            <ng-template pTemplate="content">
+                <form [formGroup]="valorForm">
+                    <div class="field">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" pInputText id="nombre" formControlName="nombre" required autofocus
+                            [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('nombre')?.invalid && valorForm.get('nombre')?.touched}" />
+                        <small class="ng-dirty ng-invalid"
+                            *ngIf="valorForm.get('nombre')?.invalid && valorForm.get('nombre')?.touched">Nombre es
+                            requerido.</small>
+                    </div>
+
+                    <div class="field">
+                        <label for="tipo">Tipo</label>
+                        <input type="text" pInputText id="tipo" formControlName="tipo" />
+                    </div>
+
+                    <div class="field">
+                        <label for="cantidad">Cantidad</label>
+                        <p-inputNumber id="cantidad" formControlName="cantidad" mode="decimal"></p-inputNumber>
+                    </div>
+
+                    <div class="field">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" pInputTextarea formControlName="descripcion" rows="3"></textarea>
+                    </div>
+                </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+                    (click)="hideDialog()"></button>
+                <button pButton pRipple [label]="editar ? 'Actualizar' : 'Guardar'" [icon]="iconButton"
+                    class="p-button-text" (click)="saveRecord()" [loading]="saving_state"></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog [(visible)]="showConfirmDelete" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="valorSelected">¿Estás seguro de que quieres eliminar <b>{{valorSelected.nombre}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
+                    (click)="showConfirmDelete = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Sí" (click)="confirmDelete()"
+                    [loading]="loadingConfirmDelete"></button>
+            </ng-template>
+        </p-dialog>
+
+    </div>
+</div>

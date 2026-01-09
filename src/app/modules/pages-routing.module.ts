@@ -52,6 +52,30 @@ import { AuthGuard } from "src/config/auth.guard";
         
       },
       {
+        path: "estados",
+        loadChildren: () =>
+          import("./pages/estados/estados.module").then(
+            (m) => m.EstadosModule
+          ),
+          canActivate: [AuthGuard]
+      },
+      {
+        path: "partidos",
+        loadChildren: () =>
+          import("./pages/partidos/partidos.module").then(
+            (m) => m.PartidosModule
+          ),
+          canActivate: [AuthGuard]
+      },
+      {
+        path: "valores",
+        loadChildren: () =>
+          import("./pages/valores/valores.module").then(
+            (m) => m.ValoresModule
+          ),
+          canActivate: [AuthGuard]
+      },
+      {
         path: "multimedia",
         loadChildren: () =>
           import("./pages/multimedia/multimedia.module").then(

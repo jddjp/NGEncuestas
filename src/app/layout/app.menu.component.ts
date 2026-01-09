@@ -27,7 +27,7 @@ export class AppMenuComponent implements OnInit {
           label: "Menú",
           icon: "pi pi-fw pi-briefcase",
           items: [
-            {
+            /*{
               label: "Dashboard",
               icon: "pi pi-fw pi-chart-pie",
               routerLink: ["/dashboard/dashboard"],
@@ -51,6 +51,23 @@ export class AppMenuComponent implements OnInit {
               label: "Multimedia",
               icon: "pi pi-fw pi-image",
               routerLink: ["/dashboard/multimedia"],
+            },*/
+            
+            
+            {
+              label: "Partidos",
+              icon: "pi pi-fw pi-flag",
+              routerLink: ["/dashboard/partidos"],
+            },
+            {
+              label: "Estados",
+              icon: "pi pi-fw pi-map",
+              routerLink: ["/dashboard/estados"],
+            },
+            {
+              label: "Valores",
+              icon: "pi pi-fw pi-dollar",
+              routerLink: ["/dashboard/valores"],
             },
             {
               label: "Usuarios",

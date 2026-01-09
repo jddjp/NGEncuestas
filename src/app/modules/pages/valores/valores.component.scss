@@ -1,0 +1,11 @@
+:host ::ng-deep {
+    .p-datatable-frozen-tbody {
+        font-weight: bold;
+    }
+
+    .p-datatable-scrollable-body {
+        .p-frozen-column {
+            font-weight: bold;
+        }
+    }
+}

@@ -1,0 +1,35 @@
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.col-12 {
+    grid-column: 1 / -1;
+}
+
+.p-error {
+    color: #f87171;
+    font-size: 0.875rem;
+}
+
+.p-input-icon-left > i {
+    left: 0.75rem;
+}
+
+.p-input-icon-left > input {
+    padding-left: 2.5rem;
+}
+
+:host ::ng-deep {
+    .p-datatable .p-datatable-tbody > tr > td {
+        padding: 0.75rem;
+    }
+
+    .p-button-rounded {
+        border-radius: 50%;
+    }
+
+    .p-button-text:not(.p-button-icon-only) {
+        background-color: transparent;
+    }
+}

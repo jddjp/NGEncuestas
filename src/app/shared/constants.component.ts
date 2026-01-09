@@ -3,6 +3,9 @@ export class ConstantsComponent {
 
   public static users_collection = "users";
   public static profile_collection = "profile";
+  public static estados_collection = "estados";
+  public static partidos_collection = "partidos";
+  public static valores_collection = "valores";
 
   public static categorie_collection = "categories";
   public static settings_collection = "settings";

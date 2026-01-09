@@ -1,0 +1,213 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-toolbar class="mb-4">
+                <ng-template pTemplate="left">
+                    <button 
+                        pButton 
+                        pRipple 
+                        type="button" 
+                        pButton 
+                        label="Nuevo" 
+                        icon="pi pi-plus" 
+                        class="p-button-success mr-2"
+                        (click)="openNew()"
+                        [disabled]="wait">
+                    </button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table 
+                #dt 
+                [value]="estados" 
+                [rows]="10" 
+                [paginator]="true" 
+                [globalFilterFields]="['nombre','codigo','region']"
+                [rowsPerPageOptions]="rowsPerPageOptions" 
+                [tableStyle]="{ 'min-width': '50rem' }"
+                [loading]="wait"
+                responsiveLayout="scroll">
+                <ng-template pTemplate="caption">
+                    <div class="flex align-items-center justify-content-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input 
+                                pInputText 
+                                type="text" 
+                                (input)="onSearch($event)" 
+                                placeholder="Buscar estados..." />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th *ngFor="let col of columnasTable" [pSortableColumn]="col.field">
+                            {{col.header}} <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                        <th style="width: 10%">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-estado>
+                    <tr>
+                        <td>{{estado.nombre}}</td>
+                        <td>{{estado.codigo}}</td>
+                        <td>{{estado.region}}</td>
+                        <td>{{estado.poblacion}}</td>
+                        <td>
+                            <button 
+                                pButton 
+                                pRipple 
+                                [pRowToggler]="estado" 
+                                class="p-button-rounded p-button-text p-button-plain" 
+                                [icon]="'pi pi-chevron-down'"
+                                (click)="editRecord(estado)">
+                            </button>
+                            <button 
+                                pButton 
+                                pRipple 
+                                icon="pi pi-trash" 
+                                class="p-button-rounded p-button-danger ml-2"
+                                (click)="deleteRecord(estado)">
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="5" class="text-center">No se encontraron estados</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<!-- Dialog para crear/editar -->
+<p-dialog 
+    [(visible)]="showInfo" 
+    [header]="editar ? 'Editar Estado' : 'Nuevo Estado'" 
+    [modal]="true" 
+    [style]="{width: '50vw'}" 
+    [breakpoints]="{'960px': '75vw', '640px': '90vw'}"
+    (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <form [formGroup]="estadoForm" class="grid">
+            <div class="col-12">
+                <label for="nombre" class="block mb-2">Nombre <span class="text-red-500">*</span></label>
+                <input 
+                    pInputText 
+                    id="nombre" 
+                    formControlName="nombre" 
+                    class="w-full"
+                    placeholder="Ej: Guerrero">
+                <small class="p-error block" *ngIf="estadoForm.get('nombre')?.invalid && estadoForm.get('nombre')?.touched">
+                    El nombre es requerido
+                </small>
+            </div>
+
+            <div class="col-12">
+                <label for="codigo" class="block mb-2">Código <span class="text-red-500">*</span></label>
+                <input 
+                    pInputText 
+                    id="codigo" 
+                    formControlName="codigo" 
+                    class="w-full"
+                    placeholder="Ej: GRO"
+                    [disabled]="editar">
+                <small class="p-error block" *ngIf="estadoForm.get('codigo')?.invalid && estadoForm.get('codigo')?.touched">
+                    El código es requerido
+                </small>
+            </div>
+
+            <div class="col-12">
+                <label for="region" class="block mb-2">Región <span class="text-red-500">*</span></label>
+                <input 
+                    pInputText 
+                    id="region" 
+                    formControlName="region" 
+                    class="w-full"
+                    placeholder="Ej: Sur">
+                <small class="p-error block" *ngIf="estadoForm.get('region')?.invalid && estadoForm.get('region')?.touched">
+                    La región es requerida
+                </small>
+            </div>
+
+            <div class="col-12">
+                <label for="poblacion" class="block mb-2">Población</label>
+                <input 
+                    pInputText 
+                    id="poblacion" 
+                    formControlName="poblacion" 
+                    class="w-full"
+                    placeholder="Ej: 3,500,000">
+            </div>
+
+            <div class="col-12">
+                <label for="descripcion" class="block mb-2">Descripción</label>
+                <textarea 
+                    pInputTextarea 
+                    id="descripcion" 
+                    formControlName="descripcion" 
+                    rows="4"
+                    class="w-full"
+                    placeholder="Descripción del estado">
+                </textarea>
+            </div>
+        </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            pRipple 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            class="p-button-text" 
+            (click)="hideDialog()">
+        </button>
+        <button 
+            pButton 
+            pRipple 
+            [label]="editar ? 'Actualizar' : 'Guardar'" 
+            [icon]="iconButton" 
+            class="p-button-success"
+            [loading]="saving_state"
+            (click)="saveRecord()">
+        </button>
+    </ng-template>
+</p-dialog>
+
+<!-- Confirmación de eliminar -->
+<p-dialog 
+    [(visible)]="showConfirmDelete" 
+    header="Confirmar" 
+    [modal]="true" 
+    [style]="{width: '50vw'}"
+    [breakpoints]="{'960px': '75vw', '640px': '90vw'}">
+    <ng-template pTemplate="content">
+        <div class="flex align-items-center justify-content-center">
+            <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+            <span>¿Estás seguro de que deseas eliminar el estado <strong>{{estadoSelected?.nombre}}</strong>?</span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button 
+            pButton 
+            pRipple 
+            label="No" 
+            icon="pi pi-times" 
+            class="p-button-text"
+            (click)="showConfirmDelete = false">
+        </button>
+        <button 
+            pButton 
+            pRipple 
+            label="Sí" 
+            icon="pi pi-check" 
+            class="p-button-danger"
+            [loading]="loadingConfirmDelete"
+            (click)="confirmDelete()">
+        </button>
+    </ng-template>
+</p-dialog>
+
+<p-toast></p-toast>
