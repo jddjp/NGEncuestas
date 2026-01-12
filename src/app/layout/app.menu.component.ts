@@ -53,7 +53,11 @@ export class AppMenuComponent implements OnInit {
               routerLink: ["/dashboard/multimedia"],
             },*/
             
-            
+            {
+              label: "Valores",
+              icon: "pi pi-fw pi-chart-bar",
+              routerLink: ["/dashboard/valores"],
+            },
             {
               label: "Partidos",
               icon: "pi pi-fw pi-flag",
@@ -63,11 +67,6 @@ export class AppMenuComponent implements OnInit {
               label: "Estados",
               icon: "pi pi-fw pi-map",
               routerLink: ["/dashboard/estados"],
-            },
-            {
-              label: "Valores",
-              icon: "pi pi-fw pi-dollar",
-              routerLink: ["/dashboard/valores"],
             },
             {
               label: "Usuarios",

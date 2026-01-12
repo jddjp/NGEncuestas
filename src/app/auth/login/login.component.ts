@@ -119,10 +119,10 @@ export class LoginComponent implements OnInit {
             ]   ;
                 console.log(userdata)
                   if (userdata.rol === "A") {
-                      this.router.navigate(['/dashboard/dashboard']);
+                      this.router.navigate(['/dashboard/valores']);
                   }
                   else{
-                      this.router.navigate(['/dashboard/comments']);
+                      this.router.navigate(['/dashboard/valores']);
                   }
             
             })

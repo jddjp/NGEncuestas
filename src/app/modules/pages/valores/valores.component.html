@@ -2,47 +2,53 @@
     <div class="col-12">
         <div class="card px-6 py-6">
             <p-toast></p-toast>
-            <p-toolbar styleClass="mb-4">
+            <!--<p-toolbar styleClass="mb-4">
                 <ng-template pTemplate="left">
                     <div class="my-2">
                         <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
                             (click)="openNew()"></button>
                     </div>
                 </ng-template>
-            </p-toolbar>
+            </p-toolbar>-->
 
-            <p-table #dt [value]="valores" [columns]="columnasTable" responsiveLayout="scroll"
-                [rows]="10" [globalFilterFields]="['nombre','tipo','cantidad']"
+            <p-table #dt [value]="allValores" [columns]="columnasTable" responsiveLayout="scroll"
+                [rows]="10" [globalFilterFields]="['nombre','mes','porcentaje','estadoNombre','partidoNombre']"
                 [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
                 dataKey="id" [loading]="wait">
                 <ng-template pTemplate="caption">
-                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
                         <h5 class="m-0">Administrar Valores</h5>
-                        <span class="block mt-2 md:mt-0 p-input-icon-left">
-                            <i class="pi pi-search"></i>
-                            <input pInputText type="text" (input)="onSearch($event)" placeholder="Buscar..." class="w-full sm:w-auto" />
-                        </span>
+                        <div class="flex align-items-center gap-2 flex-wrap md:justify-content-end w-full md:w-auto">
+                            <p-dropdown class="w-full sm:w-15rem" [options]="estados" optionLabel="nombre" optionValue="codigo"
+                                placeholder="Filtrar por estado" [showClear]="false"
+                                [(ngModel)]="selectedEstadoId"
+                                (onChange)="onEstadoFilterChange($event.value)"></p-dropdown>
+                        </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="nombre">Nombre <p-sortIcon field="nombre"></p-sortIcon></th>
-                        <th pSortableColumn="tipo">Tipo <p-sortIcon field="tipo"></p-sortIcon></th>
-                        <th pSortableColumn="cantidad">Cantidad <p-sortIcon field="cantidad"></p-sortIcon></th>
+                        <th pSortableColumn="partidoNombre">Partido <p-sortIcon field="partidoNombre"></p-sortIcon></th>
+                        <th pSortableColumn="mes">Mes <p-sortIcon field="mes"></p-sortIcon></th>
+                        <th pSortableColumn="porcentaje">Porcentaje <p-sortIcon field="porcentaje"></p-sortIcon></th>
+                        <th pSortableColumn="nombre">Encuesta <p-sortIcon field="nombre"></p-sortIcon></th>
                         <th></th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-valor>
                     <tr>
-                        <td style="width:40%; min-width:10rem;"><span class="p-column-title">Nombre</span>
+                        <td style="width:25%; min-width:10rem;"><span class="p-column-title">Partido</span>
+                            {{valor.partidoNombre}}
+                        </td>
+                        <td style="width:20%; min-width:8rem;"><span class="p-column-title">Mes</span>
+                            {{valor.mes}}
+                        </td>
+                        <td style="width:15%; min-width:6rem;"><span class="p-column-title">Porcentaje</span>
+                            {{valor.porcentaje}}%
+                        </td>
+                        <td style="width:25%; min-width:10rem;"><span class="p-column-title">Encuesta</span>
                             {{valor.nombre}}
-                        </td>
-                        <td style="width:25%; min-width:10rem;"><span class="p-column-title">Tipo</span>
-                            {{valor.tipo}}
-                        </td>
-                        <td style="width:20%; min-width:8rem;"><span class="p-column-title">Cantidad</span>
-                            {{valor.cantidad}}
                         </td>
                         <td>
                             <div class="flex">
@@ -62,7 +68,7 @@
             <ng-template pTemplate="content">
                 <form [formGroup]="valorForm">
                     <div class="field">
-                        <label for="nombre">Nombre *</label>
+                        <label for="nombre">Encuesta *</label>
                         <input type="text" pInputText id="nombre" formControlName="nombre" required autofocus
                             [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('nombre')?.invalid && valorForm.get('nombre')?.touched}" />
                         <small class="ng-dirty ng-invalid"
@@ -71,13 +77,36 @@
                     </div>
 
                     <div class="field">
-                        <label for="tipo">Tipo</label>
-                        <input type="text" pInputText id="tipo" formControlName="tipo" />
+                        <label for="estadoId">Estado *</label>
+                        <p-dropdown id="estadoId" [options]="estados" formControlName="estadoId" 
+                            optionLabel="nombre" optionValue="codigo" placeholder="Selecciona un estado"
+                            [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('estadoId')?.invalid && valorForm.get('estadoId')?.touched}"
+                            (onChange)="onFormEstadoChange($event.value)">
+                        </p-dropdown>
+                        <small class="ng-dirty ng-invalid"
+                            *ngIf="valorForm.get('estadoId')?.invalid && valorForm.get('estadoId')?.touched">Estado es
+                            requerido.</small>
                     </div>
 
                     <div class="field">
-                        <label for="cantidad">Cantidad</label>
-                        <p-inputNumber id="cantidad" formControlName="cantidad" mode="decimal"></p-inputNumber>
+                        <label for="partidoId">Partido *</label>
+                        <p-dropdown id="partidoId" [options]="partidosFiltrados" formControlName="partidoId" 
+                            optionLabel="nombre" optionValue="id" placeholder="Selecciona un partido"
+                            [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('partidoId')?.invalid && valorForm.get('partidoId')?.touched}">
+                        </p-dropdown>
+                        <small class="ng-dirty ng-invalid"
+                            *ngIf="valorForm.get('partidoId')?.invalid && valorForm.get('partidoId')?.touched">Partido es
+                            requerido.</small>
+                    </div>
+
+                    <div class="field">
+                        <label for="mes">Mes</label>
+                        <input type="text" pInputText id="mes" formControlName="mes" placeholder="ENE 2025" />
+                    </div>
+
+                    <div class="field">
+                        <label for="porcentaje">Porcentaje</label>
+                        <p-inputNumber id="porcentaje" formControlName="porcentaje" mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="2" suffix="%"></p-inputNumber>
                     </div>
 
                     <div class="field">

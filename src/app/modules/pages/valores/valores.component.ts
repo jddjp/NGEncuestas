@@ -4,6 +4,10 @@ import { Table } from 'primeng/table';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ValoresService } from 'src/app/services/valores.service';
 import { Valor } from 'src/app/shared/interfaces/valor.interface';
+import { EstadosService } from 'src/app/services/estados.service';
+import { Estado } from 'src/app/shared/interfaces/estado.interface';
+import { PartidosService } from 'src/app/services/partidos.service';
+import { Partido } from 'src/app/shared/interfaces/partido.interface';
 
 @Component({
     templateUrl: './valores.component.html',
@@ -18,17 +22,25 @@ export class ValoresComponent implements OnInit {
     ID_DATA: string = '';
     newDialog: boolean = false;
     valores: Valor[] = [];
+    allValores: Valor[] = [];
     valorSelected: Valor = null;
     loading: boolean = false;
     rowsPerPageOptions = [5, 10, 20];
     editar = false;
     showInfo = false;
     iconButton = 'pi pi-check';
+    estados: Estado[] = [];
+    partidos: Partido[] = [];
+    allPartidos: Partido[] = [];
+    partidosFiltrados: Partido[] = [];
+    selectedEstadoId: string | null = null;
+    selectedPartidoId: string | null = null;
     
     columnasTable = [
-        { field: 'nombre', header: 'Nombre' },
-        { field: 'tipo', header: 'Tipo' },
-        { field: 'cantidad', header: 'Cantidad' },
+        { field: 'partidoNombre', header: 'Partido' },
+        { field: 'mes', header: 'Mes' },
+        { field: 'porcentaje', header: 'Porcentaje' },
+        { field: 'nombre', header: 'Encuesta' },
     ];
 
     saving_state = false;
@@ -37,28 +49,67 @@ export class ValoresComponent implements OnInit {
 
     constructor(
         private valorService: ValoresService,
+        private estadoService: EstadosService,
+        private partidoService: PartidosService,
         private fb: FormBuilder,
         private messageService: MessageService
     ) {
         this.valorForm = this.fb.group({
             id: [''],
             nombre: ['', [Validators.required]],
-            tipo: [''],
-            cantidad: [0],
+            mes: [''],
+            porcentaje: [0],
+            estadoId: ['', [Validators.required]],
+            partidoId: ['', [Validators.required]],
             descripcion: [''],
         });
     }
 
     async ngOnInit() {
-        this.getData();
+        await this.loadEstados();
+        await this.loadPartidos();
+        if (this.estados.length) {
+            this.selectedEstadoId = this.estados[0].codigo;
+            this.filterPartidosByEstado();
+            if (this.partidosFiltrados.length) {
+                this.selectedPartidoId = this.partidosFiltrados[0].id;
+            }
+        }
+        await this.getData();
+    }
+
+    async loadEstados() {
+        this.estados = await this.estadoService.getEstados();
+    }
+
+    async loadPartidos() {
+        this.allPartidos = await this.partidoService.getPartidos();
+        const partidos = this.allPartidos.map(partido => {
+            const estado = this.estados.find(e => e.codigo === partido.estadoId);
+            return {
+                ...partido,
+                estadoNombre: estado ? estado.nombre : 'Sin estado'
+            };
+        });
+        this.allPartidos = partidos;
+    }
+
+    filterPartidosByEstado() {
+        if (!this.selectedEstadoId) {
+            this.partidosFiltrados = [...this.allPartidos];
+        } else {
+            this.partidosFiltrados = this.allPartidos.filter(p => p.estadoId === this.selectedEstadoId);
+        }
     }
 
     cleanForm() {
         this.valorForm = this.fb.group({
             id: [''],
             nombre: ['', [Validators.required]],
-            tipo: [''],
-            cantidad: [0],
+            mes: [''],
+            porcentaje: [0],
+            estadoId: ['', [Validators.required]],
+            partidoId: ['', [Validators.required]],
             descripcion: [''],
         });
         this.ID_DATA = '';
@@ -66,8 +117,59 @@ export class ValoresComponent implements OnInit {
 
     async getData() {
         this.wait = true;
-        this.valores = await this.valorService.getValores();
+        const valores = await this.valorService.getValores();
+        this.allValores = valores.map(valor => {
+            const estado = this.estados.find(e => e.codigo === valor.estadoId);
+            const partido = this.allPartidos.find(p => p.id === valor.partidoId);
+            return {
+                ...valor,
+                estadoNombre: estado ? estado.nombre : 'Sin estado',
+                partidoNombre: partido ? partido.nombre : 'Sin partido'
+            };
+        });
+        console.log('Valores cargados:', this.allValores);
+        this.applyFilters();
         this.wait = false;
+    }
+
+    applyFilters() {
+        let filtered = [...this.allValores];
+        
+        // Solo aplicar filtros si están seleccionados
+        if (this.selectedEstadoId) {
+            filtered = filtered.filter(v => v.estadoId === this.selectedEstadoId);
+        }
+        
+        if (this.selectedPartidoId) {
+            filtered = filtered.filter(v => v.partidoId === this.selectedPartidoId);
+        }
+        
+        this.valores = filtered;
+    }
+
+    onEstadoFilterChange(estadoId: string | null) {
+        this.selectedEstadoId = estadoId;
+        this.filterPartidosByEstado();
+        if (this.partidosFiltrados.length) {
+            this.selectedPartidoId = this.partidosFiltrados[0].id;
+        } else {
+            this.selectedPartidoId = null;
+        }
+        this.applyFilters();
+    }
+
+    onPartidoFilterChange(partidoId: string | null) {
+        this.selectedPartidoId = partidoId;
+        this.applyFilters();
+    }
+
+    onFormEstadoChange(estadoId: string) {
+        const partidoActual = this.valorForm.get('partidoId')?.value;
+        this.filterPartidosByEstado();
+        const existePartido = this.partidosFiltrados.find(p => p.id === partidoActual);
+        if (!existePartido && this.partidosFiltrados.length) {
+            this.valorForm.patchValue({ partidoId: this.partidosFiltrados[0].id });
+        }
     }
 
     openNew() {
@@ -85,8 +187,10 @@ export class ValoresComponent implements OnInit {
         this.valorForm.patchValue({
             id: valor.id,
             nombre: valor.nombre,
-            tipo: valor.tipo,
-            cantidad: valor.cantidad,
+            mes: valor.mes,
+            porcentaje: valor.porcentaje,
+            estadoId: valor.estadoId,
+            partidoId: valor.partidoId,
             descripcion: valor.descripcion,
         });
     }
@@ -112,11 +216,17 @@ export class ValoresComponent implements OnInit {
 
         try {
             const formValue = this.valorForm.value;
-            const valor: Valor = {
+            const estado = this.estados.find(e => e.codigo === formValue.estadoId);
+            const partido = this.allPartidos.find(p => p.id === formValue.partidoId);
+            const valor: any = {
                 id: formValue.id,
                 nombre: formValue.nombre,
-                tipo: formValue.tipo || '',
-                cantidad: formValue.cantidad || 0,
+                mes: formValue.mes || '',
+                porcentaje: formValue.porcentaje || 0,
+                estadoId: formValue.estadoId,
+                partidoId: formValue.partidoId,
+                estadoNombre: estado ? estado.nombre : '',
+                partidoNombre: partido ? partido.nombre : '',
                 descripcion: formValue.descripcion || ''
             };
             
