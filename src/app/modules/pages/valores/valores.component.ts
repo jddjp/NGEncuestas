@@ -17,6 +17,24 @@ import { Partido } from 'src/app/shared/interfaces/partido.interface';
 export class ValoresComponent implements OnInit {
     @ViewChild('dt') table!: Table;
     
+    // Datos mock
+    mockValores = [
+        {
+            "partido": "partido1",
+            "valores": {
+                "ene": 10, "feb": 15, "mar": 25, "abr": 25, "may": 12, "jun": 59,
+                "jul": 15, "ago": 12, "sep": 78, "oct": 78, "nov": 45, "dic": 45
+            }
+        },
+        {
+            "partido": "partido2",
+            "valores": {
+                "ene": 45, "feb": 23, "mar": 48, "abr": 25, "may": 65, "jun": 23,
+                "jul": 47, "ago": 87, "sep": 98, "oct": 36, "nov": 26, "dic": 47
+            }
+        }
+    ];
+    
     wait = true;
     valorForm: FormGroup;
     ID_DATA: string = '';
@@ -117,21 +135,52 @@ export class ValoresComponent implements OnInit {
 
     async getData() {
         this.wait = true;
-        const valores = await this.valorService.getValores();
-        this.allValores = valores.map(valor => {
-            const porcentaje = (valor as any).porcentaje ?? (valor as any).valorMes ?? 0;
-            const estado = this.estados.find(e => e.codigo === valor.estadoId);
-            const partido = this.allPartidos.find(p => p.id === valor.partidoId);
-            return {
-                ...valor,
-                porcentaje,
-                estadoNombre: estado ? estado.nombre : 'Sin estado',
-                partidoNombre: partido ? partido.nombre : 'Sin partido'
-            };
-        });
-        //console.log('Valores cargados:', this.allValores);
+        // Usar datos mock
+        this.allValores = this.mapearDatosAValores(this.mockValores);
         this.applyFilters();
         this.wait = false;
+    }
+
+    mapearDatosAValores(datos: any[]): Valor[] {
+        const resultado: Valor[] = [];
+        const mesesMap: { [key: string]: string } = {
+            'ene': 'ENE', 'feb': 'FEB', 'mar': 'MAR', 'abr': 'ABR',
+            'may': 'MAY', 'jun': 'JUN', 'jul': 'JUL', 'ago': 'AGO',
+            'sep': 'SEP', 'oct': 'OCT', 'nov': 'NOV', 'dic': 'DIC'
+        };
+
+        datos.forEach((item, index) => {
+            // Buscar partido por nombre (case-insensitive)
+            const partido = this.allPartidos.find(p => 
+                p.nombre?.toLowerCase().includes(item.partido.toLowerCase()) ||
+                item.partido.toLowerCase().includes(p.nombre?.toLowerCase())
+            );
+            
+            // Si no existe partido exacto, usar el primero del estado o el primer estado
+            const estado = partido ? 
+                this.estados.find(e => e.codigo === partido.estadoId) : 
+                this.estados[0];
+            
+            // Procesar cada mes del objeto valores
+            Object.entries(item.valores).forEach(([mesCorto, valor]) => {
+                const mesLargo = mesesMap[mesCorto.toLowerCase()];
+                if (mesLargo) {
+                    resultado.push({
+                        id: `temp-${index}-${mesCorto}`,
+                        nombre: `-`,
+                        mes: mesLargo,
+                        porcentaje: Number(valor) || 0,
+                        estadoId: estado?.codigo || '',
+                        partidoId: partido?.id || `partido-${index}`,
+                        estadoNombre: estado?.nombre || 'Sin estado',
+                        partidoNombre: partido?.nombre || item.partido,
+                        descripcion: ''
+                    });
+                }
+            });
+        });
+        
+        return resultado;
     }
 
     applyFilters() {
@@ -157,24 +206,23 @@ export class ValoresComponent implements OnInit {
     generarFilasCompletas(valoresFiltrados: Valor[]): Valor[] {
         const resultado: Valor[] = [];
         
-        // Obtener partidos según el filtro
-        let partidosParaMostrar: Partido[] = [];
-        if (this.selectedEstadoId) {
-            partidosParaMostrar = this.allPartidos.filter(p => p.estadoId === this.selectedEstadoId);
-        } else {
-            partidosParaMostrar = [...this.allPartidos];
-        }
+        // Agrupar valores por partido
+        const valoresPorPartido = new Map<string, Valor[]>();
+        valoresFiltrados.forEach(valor => {
+            if (!valoresPorPartido.has(valor.partidoId)) {
+                valoresPorPartido.set(valor.partidoId, []);
+            }
+            valoresPorPartido.get(valor.partidoId)!.push(valor);
+        });
         
-        if (this.selectedPartidoId) {
-            partidosParaMostrar = partidosParaMostrar.filter(p => p.id === this.selectedPartidoId);
-        }
-        
-        // Para cada partido, asegurar que existen ambos meses
-        partidosParaMostrar.forEach(partido => {
+        // Para cada partido, asegurar que tenga todos los meses
+        valoresPorPartido.forEach((valoresDelPartido, partidoId) => {
+            const primerValor = valoresDelPartido[0];
+            
             this.mesesRequeridos.forEach(mes => {
-                // Buscar si ya existe un valor para este partido y mes (coincidencia por prefijo de abreviatura)
-                const valorExistente = valoresFiltrados.find(
-                    v => v.partidoId === partido.id && (v.mes || '').toUpperCase().startsWith(mes)
+                // Buscar si ya existe un valor para este mes
+                const valorExistente = valoresDelPartido.find(
+                    v => (v.mes || '').toUpperCase().startsWith(mes)
                 );
                 
                 if (valorExistente) {
@@ -182,16 +230,15 @@ export class ValoresComponent implements OnInit {
                     resultado.push(valorExistente);
                 } else {
                     // Si no existe, crear una fila con valores por defecto
-                    const estado = this.estados.find(e => e.codigo === partido.estadoId);
                     resultado.push({
-                        id: `temp-${partido.id}-${mes}`,
+                        id: `temp-${partidoId}-${mes}`,
                         nombre: '-',
                         mes: mes,
                         porcentaje: 0,
-                        estadoId: partido.estadoId || '',
-                        partidoId: partido.id || '',
-                        estadoNombre: estado ? estado.nombre : 'Sin estado',
-                        partidoNombre: partido.nombre,
+                        estadoId: primerValor.estadoId,
+                        partidoId: primerValor.partidoId,
+                        estadoNombre: primerValor.estadoNombre,
+                        partidoNombre: primerValor.partidoNombre,
                         descripcion: ''
                     });
                 }

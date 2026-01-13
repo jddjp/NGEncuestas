@@ -51,7 +51,9 @@ export class CrudService {
       const querySnapshot = await getDocs(table);
       const data: any[] = [];
       querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
+        const docData = doc.data();
+        // Asegurar que el id de Firebase sea el que prevalezca
+        data.push({ ...docData, id: doc.id });
       });
       return data;
     } catch (error) {
@@ -63,7 +65,7 @@ export class CrudService {
   async update(data: any, collectionName: string): Promise<boolean> {
     try {
       const docRef = await updateDoc(
-        doc(this.db, collectionName, data.uid),
+        doc(this.db, collectionName, data.id),
         data
       );
       console.log("El registro se actualizo ");
