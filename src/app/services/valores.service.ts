@@ -42,6 +42,7 @@ export class ValoresService {
   }
 
   async updateValor(valor: Valor): Promise<boolean> {
+    console.log('Updating valor in service:', valor);
     try {
       const valorData = {
         ...valor,

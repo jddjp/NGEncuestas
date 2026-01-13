@@ -11,11 +11,11 @@
                 </ng-template>
             </p-toolbar>-->
 
-            <p-table #dt [value]="allValores" [columns]="columnasTable" responsiveLayout="scroll"
-                [rows]="10" [globalFilterFields]="['nombre','mes','porcentaje','estadoNombre','partidoNombre']"
+            <p-table #dt [value]="valoresTranspuestos" responsiveLayout="scroll"
+                [rows]="10" [globalFilterFields]="['partidoNombre','estadoNombre']"
                 [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
                 currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
-                dataKey="id" [loading]="wait">
+                dataKey="partidoId" [loading]="wait">
                 <ng-template pTemplate="caption">
                     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
                         <h5 class="m-0">Administrar Valores</h5>
@@ -24,46 +24,40 @@
                                 placeholder="Filtrar por estado" [showClear]="false"
                                 [(ngModel)]="selectedEstadoId"
                                 (onChange)="onEstadoFilterChange($event.value)"></p-dropdown>
+                            <p-dropdown class="w-full sm:w-15rem" [options]="partidosFiltrados" optionLabel="nombre" optionValue="siglas"
+                                placeholder="Todos los partidos" [showClear]="true"
+                                [(ngModel)]="selectedPartidoId"
+                                (onChange)="onPartidoFilterChange($event.value)"></p-dropdown>
                         </div>
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="partidoNombre">Partido <p-sortIcon field="partidoNombre"></p-sortIcon></th>
-                        <th pSortableColumn="mes">Mes <p-sortIcon field="mes"></p-sortIcon></th>
-                        <th pSortableColumn="porcentaje">Porcentaje <p-sortIcon field="porcentaje"></p-sortIcon></th>
-                        <th pSortableColumn="nombre">Encuesta <p-sortIcon field="nombre"></p-sortIcon></th>
-                        <th></th>
+                        <th pSortableColumn="partidoNombre" style="min-width: 150px;">Partido <p-sortIcon field="partidoNombre"></p-sortIcon></th>
+                        <th *ngFor="let mes of mesesRequeridos" style="min-width: 80px; text-align: center;">{{mes}}</th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-valor>
+                <ng-template pTemplate="body" let-fila>
                     <tr>
-                        <td style="width:25%; min-width:10rem;"><span class="p-column-title">Partido</span>
-                            {{valor.partidoNombre}}
+                        <td style="min-width: 150px;">
+                            <span class="p-column-title">Partido</span>
+                            {{fila.partidoNombre}}
                         </td>
-                        <td style="width:20%; min-width:8rem;"><span class="p-column-title">Mes</span>
-                            {{valor.mes}}
-                        </td>
-                        <td style="width:15%; min-width:6rem;"><span class="p-column-title">Porcentaje</span>
-                            {{valor.porcentaje}}%
-                        </td>
-                        <td style="width:25%; min-width:10rem;"><span class="p-column-title">Encuesta</span>
-                            {{valor.nombre}}
-                        </td>
-                        <td>
-                            <div class="flex">
-                                <button pButton pRipple icon="pi pi-pencil"
-                                    class="p-button-rounded p-button-success mr-2" (click)="editRecord(valor)"></button>
-                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                                    (click)="deleteRecord(valor)"></button>
-                            </div>
+                        <td *ngFor="let mes of mesesRequeridos" style="min-width: 80px; text-align: center;">
+                            <span class="p-column-title">{{mes}}</span>
+                            <p-inputNumber [(ngModel)]="fila[mes].porcentaje" 
+                                mode="decimal" 
+                                [minFractionDigits]="0" 
+                                [maxFractionDigits]="2"
+                                inputStyleClass="w-full text-center" 
+                                (onBlur)="onMesValueChange(fila, mes, fila[mes].porcentaje)"></p-inputNumber>
                         </td>
                     </tr>
                 </ng-template>
             </p-table>
         </div>
 
-        <p-dialog [(visible)]="showInfo" [style]="{width: '450px'}" header="Detalles del Valor" [modal]="true"
+     <!--   <p-dialog [(visible)]="showInfo" [style]="{width: '450px'}" header="Detalles del Valor" [modal]="true"
             class="p-fluid">
             <ng-template pTemplate="content">
                 <form [formGroup]="valorForm">
@@ -136,6 +130,6 @@
                     [loading]="loadingConfirmDelete"></button>
             </ng-template>
         </p-dialog>
-
+    -->
     </div>
 </div>
