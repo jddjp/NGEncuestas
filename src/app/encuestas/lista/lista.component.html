@@ -21,6 +21,7 @@
             <h2 class="selector-title">Rumbo al 2027</h2>
             <p-dropdown [options]="estados" [(ngModel)]="estadoSeleccionado" 
                 placeholder="Selecciona un estado" optionLabel="nombre"
+                (onChange)="onEstadoChange()"
                 styleClass="estado-dropdown"></p-dropdown>
         </div>
     </section>

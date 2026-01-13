@@ -21,6 +21,7 @@ export class ValoresComponent implements OnInit {
     mockValores = [
         {
             "partido": "partido1",
+            "partidoId":"HhrloKkqEX4D924RlMvN",
             "valores": {
                 "ene": 10, "feb": 15, "mar": 25, "abr": 25, "may": 12, "jun": 59,
                 "jul": 15, "ago": 12, "sep": 78, "oct": 78, "nov": 45, "dic": 45
@@ -28,6 +29,7 @@ export class ValoresComponent implements OnInit {
         },
         {
             "partido": "partido2",
+            "partidoId":"2hV1bX1j0fXU5Yk3J5vG",
             "valores": {
                 "ene": 45, "feb": 23, "mar": 48, "abr": 25, "may": 65, "jun": 23,
                 "jul": 47, "ago": 87, "sep": 98, "oct": 36, "nov": 26, "dic": 47
@@ -90,7 +92,6 @@ export class ValoresComponent implements OnInit {
         if (this.estados.length) {
             this.selectedEstadoId = this.estados[0].codigo;
             this.filterPartidosByEstado();
-            // No seleccionar ningún partido por defecto para mostrar todos
             this.selectedPartidoId = null;
         }
         await this.getData();
@@ -102,14 +103,6 @@ export class ValoresComponent implements OnInit {
 
     async loadPartidos() {
         this.allPartidos = await this.partidoService.getPartidos();
-        const partidos = this.allPartidos.map(partido => {
-            const estado = this.estados.find(e => e.codigo === partido.estadoId);
-            return {
-                ...partido,
-                estadoNombre: estado ? estado.nombre : 'Sin estado'
-            };
-        });
-        this.allPartidos = partidos;
     }
 
     filterPartidosByEstado() {
@@ -118,6 +111,7 @@ export class ValoresComponent implements OnInit {
         } else {
             this.partidosFiltrados = this.allPartidos.filter(p => p.estadoId === this.selectedEstadoId);
         }
+        console.log('Partidos filtrados:', this.partidosFiltrados);
     }
 
     cleanForm() {
@@ -135,10 +129,62 @@ export class ValoresComponent implements OnInit {
 
     async getData() {
         this.wait = true;
-        // Usar datos mock
-        this.allValores = this.mapearDatosAValores(this.mockValores);
-        this.applyFilters();
-        this.wait = false;
+        try {
+            // Traer valores reales de Firebase
+            const valoresDB = await this.valorService.getValores();
+            
+            // Comenzar con los valores de la BD
+            this.allValores = [...valoresDB];
+            
+            // Completar partidos faltantes con valores en 0
+            this.allValores = this.completarPartidosFaltantes(this.allValores);
+            
+            this.applyFilters();
+        } catch (error) {
+            console.error('Error cargando valores:', error);
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'No se pudieron cargar los valores'
+            });
+        } finally {
+            this.wait = false;
+        }
+    }
+
+    completarPartidosFaltantes(valoresDB: Valor[]): Valor[] {
+        const resultado = [...valoresDB];
+        
+        // Para cada estado
+        this.estados.forEach(estado => {
+            // Obtener partidos de este estado
+            const partidosDelEstado = this.allPartidos.filter(p => p.estadoId === estado.codigo);
+            
+            // Para cada partido del estado
+            partidosDelEstado.forEach(partido => {
+                // Verificar si existe algún valor para este partido
+                const tieneValores = valoresDB.some(v => v.partidoId === partido.id);
+                
+                // Si no tiene valores, crear registros con 0 para todos los meses
+                if (!tieneValores) {
+                    this.mesesRequeridos.forEach(mes => {
+                        resultado.push({
+                            id: `auto-created-${partido.id}-${mes}`,
+                            nombre: '-',
+                            mes: mes,
+                            porcentaje: 0,
+                            estadoId: estado.codigo,
+                            partidoId: partido.id,
+                            estadoNombre: estado.nombre,
+                            partidoNombre: partido.nombre,
+                            descripcion: ''
+                        });
+                    });
+                }
+            });
+        });
+        
+        return resultado;
     }
 
     mapearDatosAValores(datos: any[]): Valor[] {
@@ -280,12 +326,17 @@ export class ValoresComponent implements OnInit {
                     v => v.partidoId === partido.partidoId && (v.mes || '').toUpperCase().startsWith(mes)
                 );
                 
+                // Verificar si es temporal: IDs que empiezan con 'temp-', 'auto-created-' o son null
+                const esTemp = !valorMes?.id || 
+                              valorMes.id.startsWith('temp-') || 
+                              valorMes.id.startsWith('auto-created-');
+                
                 fila[mes] = {
                     id: valorMes?.id || null,
                     porcentaje: valorMes?.porcentaje || 0,
                     nombre: valorMes?.nombre || '-',
                     mes: mes,
-                    isTemp: valorMes?.id?.startsWith('temp-') || !valorMes?.id
+                    isTemp: esTemp
                 };
             });
             
@@ -301,15 +352,15 @@ export class ValoresComponent implements OnInit {
              await this.valorService.addValor({ ...valor });
              return
         }
-        console.log('Actualizando valor:', valor);
+        //console.log('Actualizando valor:', valor);
         try {
             await this.valorService.updateValor({ ...valor });
-            this.messageService.add({
+            /*this.messageService.add({
                 severity: 'success',
                 summary: 'Actualizado',
                 detail: 'Valor actualizado'
-            });
-            await this.getData();
+            });*/
+           // await this.getData();
         } catch (error) {
             this.messageService.add({
                 severity: 'error',
@@ -334,26 +385,27 @@ export class ValoresComponent implements OnInit {
             partidoNombre: filaPartido.partidoNombre,
             descripcion: ''
         };
-        
+        console.log('Guardando valor para mes:', valorObj);
+        console.log('mesData:', mesData);
         try {
             if (!mesData.id || mesData.isTemp) {
                 // Crear nuevo registro
                 await this.valorService.addValor(valorObj);
-                this.messageService.add({
+                /*this.messageService.add({
                     severity: 'success',
                     summary: 'Creado',
                     detail: 'Valor guardado'
-                });
+                });*/
             } else {
                 // Actualizar registro existente
                 await this.valorService.updateValor(valorObj);
-                this.messageService.add({
+                /*this.messageService.add({
                     severity: 'success',
                     summary: 'Actualizado',
                     detail: 'Valor actualizado'
-                });
+                });*/
             }
-            await this.getData();
+           // await this.getData();
         } catch (error) {
             this.messageService.add({
                 severity: 'error',
