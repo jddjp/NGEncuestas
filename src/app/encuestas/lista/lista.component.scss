@@ -1,6 +1,8 @@
 .landing-container {
     min-height: 100vh;
+    height: auto;
     background: #f5f5f5;
+    overflow: visible;
 }
 
 // Header
@@ -588,6 +590,350 @@
 
                 .position-number {
                     display: none;
+                }
+            }
+        }
+    }
+}
+
+// Evolución Mensual
+.evolution-section {
+    background: white;
+    margin: 2rem auto;
+    max-width: 1600px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    display: block !important;
+    position: relative;
+
+    .evolution-header {
+        background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        color: white;
+        text-align: center;
+        padding: 2rem;
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .evolution-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .evolution-note {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 0;
+            font-style: italic;
+        }
+    }
+
+    .evolution-content {
+        padding: 2rem;
+        overflow: visible !important;
+        min-height: auto !important;
+        height: auto !important;
+        max-height: none !important;
+        display: block;
+    }
+
+    .evolution-table-container {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: visible !important;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        max-height: none !important;
+        height: auto !important;
+        min-height: auto !important;
+        display: block;
+        
+        /* Estilos para scroll más visible */
+        &::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        &::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    }
+
+    .evolution-table {
+        width: 100% !important;
+        min-width: 800px;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        table-layout: auto;
+        height: auto !important;
+        max-height: none !important;
+        min-height: auto !important;
+        display: table !important;
+
+        th, td {
+            padding: 1rem 0.75rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+            white-space: nowrap;
+            height: auto !important;
+            max-height: none !important;
+        }
+
+        thead {
+            background: #f8fafc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            height: auto;
+            display: table-header-group;
+
+            .party-header {
+                background: #1e293b;
+                color: white;
+                font-weight: 600;
+                text-align: left;
+                border-right: 2px solid #475569;
+                position: sticky;
+                left: 0;
+                z-index: 11;
+                min-width: 180px;
+                max-width: 180px;
+                width: 180px;
+            }
+
+            .month-header-cell {
+                font-weight: 600;
+                color: #1e293b;
+                min-width: 100px;
+                width: 100px;
+                background: #f1f5f9;
+                border-left: 1px solid #e2e8f0;
+                border-right: 1px solid #e2e8f0;
+            }
+        }
+
+        tbody {
+            display: table-row-group !important;
+            height: auto !important;
+            max-height: none !important;
+            min-height: auto !important;
+            overflow: visible !important;
+            
+            .party-row {
+                transition: background-color 0.2s ease;
+                display: table-row !important;
+                height: auto !important;
+                max-height: none !important;
+                min-height: 50px;
+
+                &:hover {
+                    background: #f8fafc;
+                }
+
+                .party-name-cell {
+                    background: white;
+                    position: sticky;
+                    left: 0;
+                    z-index: 9;
+                    border-right: 2px solid #e2e8f0;
+                    text-align: left;
+                    min-width: 180px;
+                    max-width: 180px;
+                    width: 180px;
+                    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+
+                    .party-info {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                        padding: 0 0.5rem;
+
+                        .party-color {
+                            width: 18px;
+                            height: 18px;
+                            border-radius: 4px;
+                            flex-shrink: 0;
+                            border: 1px solid rgba(0, 0, 0, 0.1);
+                        }
+
+                        span {
+                            font-weight: 600;
+                            color: #374151;
+                            font-size: 0.85rem;
+                        }
+                    }
+                }
+
+                .percentage-cell {
+                    padding: 1rem 0.75rem;
+                    border-left: 1px solid #e2e8f0;
+                    border-right: 1px solid #e2e8f0;
+                    min-width: 100px;
+                    width: 100px;
+                    height: auto;
+
+                    .percentage-container {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 0.5rem;
+
+                        .percentage-value {
+                            font-weight: 600;
+                            color: #1e293b;
+                            font-size: 0.85rem;
+                        }
+
+                        .mini-bar {
+                            width: 100%;
+                            height: 6px;
+                            background: #e2e8f0;
+                            border-radius: 3px;
+                            overflow: hidden;
+
+                            .mini-bar-fill {
+                                height: 100%;
+                                border-radius: 3px;
+                                transition: width 0.8s ease;
+                                animation: fillBar 1s ease forwards;
+                                transform-origin: left;
+
+                                @keyframes fillBar {
+                                    from { transform: scaleX(0); }
+                                    to { transform: scaleX(1); }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .no-evolution-data {
+        text-align: center;
+        color: #6b7280;
+        padding: 4rem 2rem;
+
+        i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        p {
+            font-size: 1.1rem;
+            margin: 0;
+        }
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+        margin: 1rem;
+
+        .evolution-header {
+            padding: 1.5rem 1rem;
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .evolution-subtitle {
+                font-size: 0.9rem;
+            }
+        }
+
+        .evolution-content {
+            padding: 1rem;
+        }
+
+        .evolution-table-container {
+            border-radius: 6px;
+            margin: 0 -1rem; /* Extender hasta los bordes en móvil */
+            border-radius: 0;
+        }
+
+        .evolution-table {
+            font-size: 0.8rem;
+            min-width: 600px; /* Ancho mínimo reducido para móvil */
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            thead {
+                .party-header {
+                    min-width: 140px;
+                    max-width: 140px;
+                    width: 140px;
+                    font-size: 0.8rem;
+                }
+
+                .month-header-cell {
+                    min-width: 80px;
+                    width: 80px;
+                    font-size: 0.8rem;
+                }
+            }
+
+            tbody {
+                .party-name-cell {
+                    min-width: 140px;
+                    max-width: 140px;
+                    width: 140px;
+
+                    .party-info {
+                        gap: 0.5rem;
+                        padding: 0 0.25rem;
+
+                        .party-color {
+                            width: 14px;
+                            height: 14px;
+                        }
+
+                        span {
+                            font-size: 0.75rem;
+                        }
+                    }
+                }
+
+                .percentage-cell {
+                    padding: 0.5rem 0.25rem;
+                    min-width: 80px;
+                    width: 80px;
+
+                    .percentage-container {
+                        gap: 0.25rem;
+
+                        .percentage-value {
+                            font-size: 0.75rem;
+                        }
+
+                        .mini-bar {
+                            height: 4px;
+                        }
+                    }
                 }
             }
         }
