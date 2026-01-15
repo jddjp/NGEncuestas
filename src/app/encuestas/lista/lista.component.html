@@ -21,6 +21,7 @@
             <h2 class="selector-title">Rumbo al 2027</h2>
             <p-dropdown [options]="estados" [(ngModel)]="estadoSeleccionado" 
                 placeholder="Selecciona un estado" optionLabel="nombre"
+                (onChange)="onEstadoChange()"
                 styleClass="estado-dropdown"></p-dropdown>
         </div>
     </section>
@@ -80,6 +81,74 @@
                         <span class="percentage">{{ partido.porcentaje }}%</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Evolución Mensual -->
+    <section class="evolution-section">
+        <div class="evolution-header">
+            <h2>EVOLUCIÓN MENSUAL DE PREFERENCIAS</h2>
+            <p class="evolution-subtitle">Tendencias de votación por partido durante el año</p>
+            <p class="evolution-note">* Los porcentajes son calculados en base al total de votos válidos por mes</p>
+        </div>
+        
+        <div class="evolution-content">
+            <div class="evolution-table-container" *ngIf="datosMensuales.length > 0" 
+                 style="height: auto !important; max-height: none !important; overflow-y: visible !important;">
+                <table class="evolution-table" 
+                       style="height: auto !important; max-height: none !important;">
+                    <thead>
+                        <tr>
+                            <th class="party-header">Partido</th>
+                            <th *ngFor="let datoMes of datosMensuales" class="month-header-cell">{{ datoMes.mes }}</th>
+                        </tr>
+                    </thead>
+                    <tbody style="height: auto !important; max-height: none !important;">
+                        <tr *ngFor="let partido of getUniquePadridos(); trackBy: trackByPartido" 
+                            class="party-row"
+                            style="height: auto !important; min-height: 60px; display: table-row !important;">
+                            <td class="party-name-cell">
+                                <div class="party-info">
+                                    <div class="party-color" [style.background]="getPartidoColor(partido)"></div>
+                                    <span>{{ partido }}</span>
+                                </div>
+                            </td>
+                            <td *ngFor="let datoMes of datosMensuales" class="percentage-cell">
+                                <div class="percentage-container">
+                                    <span class="percentage-value">{{ getPercentageForPartyAndMonth(partido, datoMes.mes) }}%</span>
+                                    <div class="mini-bar">
+                                        <div class="mini-bar-fill" 
+                                             [style.background]="getPartidoColor(partido)"
+                                             [style.width.%]="getPercentageForPartyAndMonth(partido, datoMes.mes)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot style="background: #f1f5f9; font-weight: 600;">
+                        <tr>
+                            <td class="party-name-cell" style="background: #e2e8f0;">
+                                <div class="party-info">
+                                    <span style="font-weight: 700; color: #1e293b;">TOTAL</span>
+                                </div>
+                            </td>
+                            <td *ngFor="let datoMes of datosMensuales" class="percentage-cell" style="background: #f8fafc;">
+                                <div class="percentage-container">
+                                    <span class="percentage-value" style="font-weight: 700; color: #059669;">
+                                        {{ getTotalVotosDelMes(datoMes.mes) | number:'1.1-1' }}%
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <div *ngIf="datosMensuales.length === 0" class="no-evolution-data">
+                <i class="pi pi-chart-line"></i>
+                <p>No hay datos históricos disponibles para mostrar la evolución mensual.</p>
             </div>
         </div>
     </section>
