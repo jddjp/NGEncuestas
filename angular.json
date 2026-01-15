@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/NgCampaignBuap",
+                        "outputPath": "dist/NGEstadisticas",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": [
@@ -47,8 +47,8 @@
                                 },
                                 {
                                     "type": "anyComponentStyle",
-                                    "maximumWarning": "2kb",
-                                    "maximumError": "4kb"
+                                     "maximumWarning": "1mb",
+                                    "maximumError": "5mb"
                                 }
                             ],
                             "outputHashing": "all"

@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "campaignbuap"
-  }
+    "default": "ngestadisticas",
+    "ngestadisticas": "ngestadisticas"
+  },
+  "targets": {},
+  "etags": {}
 }

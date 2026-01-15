@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/NgCampaignBuap",
+    "public": "dist/NGEstadisticas",
     "ignore": [
       "firebase.json",
       "**/.*",
