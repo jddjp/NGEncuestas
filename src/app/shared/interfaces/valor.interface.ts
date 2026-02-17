@@ -2,6 +2,7 @@ export interface Valor {
     id?: string;
     nombre: string;
     mes: string;
+     anio: number;
     porcentaje: number;
     estadoId: string;
     partidoId: string;

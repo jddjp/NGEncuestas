@@ -1,135 +1,140 @@
 <div class="grid">
-    <div class="col-12">
-        <div class="card px-6 py-6">
-            <p-toast></p-toast>
-            <!--<p-toolbar styleClass="mb-4">
-                <ng-template pTemplate="left">
-                    <div class="my-2">
-                        <button pButton pRipple label="Nuevo" icon="pi pi-plus" class="p-button-success mr-2"
-                            (click)="openNew()"></button>
-                    </div>
-                </ng-template>
-            </p-toolbar>-->
+  <div class="col-12">
+    <div class="card px-6 py-6">
 
-            <p-table #dt [value]="valoresTranspuestos" responsiveLayout="scroll"
-                [rows]="10" [globalFilterFields]="['partidoNombre','estadoNombre']"
-                [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true"
-                currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros" [rowHover]="true"
-                dataKey="partidoId" [loading]="wait">
-                <ng-template pTemplate="caption">
-                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
-                        <h5 class="m-0">Administrar Valores</h5>
-                        <div class="flex align-items-center gap-2 flex-wrap md:justify-content-end w-full md:w-auto">
-                            <p-dropdown class="w-full sm:w-15rem" [options]="estados" optionLabel="nombre" optionValue="codigo"
-                                placeholder="Filtrar por estado" [showClear]="false"
-                                [(ngModel)]="selectedEstadoId"
-                                (onChange)="onEstadoFilterChange($event.value)"></p-dropdown>
-                            <!--<p-dropdown class="w-full sm:w-15rem" [options]="partidosFiltrados" optionLabel="nombre" optionValue="siglas"
-                                placeholder="Todos los partidos" [showClear]="true"
-                                [(ngModel)]="selectedPartidoId"
-                                (onChange)="onPartidoFilterChange($event.value)"></p-dropdown>-->
-                        </div>
-                    </div>
-                </ng-template>
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th pSortableColumn="partidoNombre" style="min-width: 150px;">Partido <p-sortIcon field="partidoNombre"></p-sortIcon></th>
-                        <th *ngFor="let mes of mesesRequeridos" style="min-width: 80px; text-align: center;">{{mes}}</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-fila>
-                    <tr>
-                        <td style="min-width: 150px;">
-                            <span class="p-column-title">Partido</span>
-                            {{fila.partidoNombre}}
-                        </td>
-                        <td *ngFor="let mes of mesesRequeridos" style="min-width: 80px; text-align: center;">
-                            <span class="p-column-title">{{mes}}</span>
-                            <p-inputNumber [(ngModel)]="fila[mes].porcentaje" 
-                                mode="decimal" 
-                                [minFractionDigits]="0" 
-                                [maxFractionDigits]="2"
-                                inputStyleClass="w-full text-center" 
-                                (onBlur)="onMesValueChange(fila, mes, fila[mes].porcentaje)"></p-inputNumber>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-        </div>
+      <p-toast></p-toast>
 
-     <!--   <p-dialog [(visible)]="showInfo" [style]="{width: '450px'}" header="Detalles del Valor" [modal]="true"
-            class="p-fluid">
-            <ng-template pTemplate="content">
-                <form [formGroup]="valorForm">
-                    <div class="field">
-                        <label for="nombre">Encuesta *</label>
-                        <input type="text" pInputText id="nombre" formControlName="nombre" required autofocus
-                            [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('nombre')?.invalid && valorForm.get('nombre')?.touched}" />
-                        <small class="ng-dirty ng-invalid"
-                            *ngIf="valorForm.get('nombre')?.invalid && valorForm.get('nombre')?.touched">Nombre es
-                            requerido.</small>
-                    </div>
+      <!-- ================== TOOLBAR ================== -->
+      <p-toolbar class="mb-4">
+        <ng-template pTemplate="left">
+          <h5 class="m-0">Administrar Valores</h5>
+        </ng-template>
+      </p-toolbar>
 
-                    <div class="field">
-                        <label for="estadoId">Estado *</label>
-                        <p-dropdown id="estadoId" [options]="estados" formControlName="estadoId" 
-                            optionLabel="nombre" optionValue="codigo" placeholder="Selecciona un estado"
-                            [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('estadoId')?.invalid && valorForm.get('estadoId')?.touched}"
-                            (onChange)="onFormEstadoChange($event.value)">
-                        </p-dropdown>
-                        <small class="ng-dirty ng-invalid"
-                            *ngIf="valorForm.get('estadoId')?.invalid && valorForm.get('estadoId')?.touched">Estado es
-                            requerido.</small>
-                    </div>
+      <!-- ================== TABLA ================== -->
+      <p-table
+        #dt
+        [value]="valoresTranspuestos"
+        dataKey="rowKey"
+        responsiveLayout="scroll"
+        [rows]="10"
+        [paginator]="true"
+        [rowsPerPageOptions]="rowsPerPageOptions"
+        [loading]="wait"
+        [rowHover]="true"
+      >
 
-                    <div class="field">
-                        <label for="partidoId">Partido *</label>
-                        <p-dropdown id="partidoId" [options]="partidosFiltrados" formControlName="partidoId" 
-                            optionLabel="nombre" optionValue="id" placeholder="Selecciona un partido"
-                            [ngClass]="{'ng-invalid ng-dirty' : valorForm.get('partidoId')?.invalid && valorForm.get('partidoId')?.touched}">
-                        </p-dropdown>
-                        <small class="ng-dirty ng-invalid"
-                            *ngIf="valorForm.get('partidoId')?.invalid && valorForm.get('partidoId')?.touched">Partido es
-                            requerido.</small>
-                    </div>
+        <!-- ================== CAPTION / FILTROS ================== -->
+        <ng-template pTemplate="caption">
+          <div
+            class="flex flex-column md:flex-row md:justify-content-between md:align-items-center gap-3">
 
-                    <div class="field">
-                        <label for="mes">Mes</label>
-                        <input type="text" pInputText id="mes" formControlName="mes" placeholder="ENE 2025" />
-                    </div>
+            <div class="flex align-items-center gap-2">
+              <span class="font-semibold">Filtrar por estado:</span>
 
-                    <div class="field">
-                        <label for="porcentaje">Porcentaje</label>
-                        <p-inputNumber id="porcentaje" formControlName="porcentaje" mode="decimal" [minFractionDigits]="1" [maxFractionDigits]="2" suffix="%"></p-inputNumber>
-                    </div>
-
-                    <div class="field">
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" pInputTextarea formControlName="descripcion" rows="3"></textarea>
-                    </div>
-                </form>
-            </ng-template>
-
-            <ng-template pTemplate="footer">
-                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
-                    (click)="hideDialog()"></button>
-                <button pButton pRipple [label]="editar ? 'Actualizar' : 'Guardar'" [icon]="iconButton"
-                    class="p-button-text" (click)="saveRecord()" [loading]="saving_state"></button>
-            </ng-template>
-        </p-dialog>
-
-        <p-dialog [(visible)]="showConfirmDelete" header="Confirmar" [modal]="true" [style]="{width:'450px'}">
-            <div class="flex align-items-center justify-content-center">
-                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-                <span *ngIf="valorSelected">¿Estás seguro de que quieres eliminar <b>{{valorSelected.nombre}}</b>?</span>
+              <p-dropdown
+                [options]="estados"
+                optionLabel="nombre"
+                optionValue="codigo"
+                placeholder="Estado"
+                [(ngModel)]="selectedEstadoId"
+                (onChange)="onEstadoFilterChange($event.value)">
+              </p-dropdown>
             </div>
-            <ng-template pTemplate="footer">
-                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"
-                    (click)="showConfirmDelete = false"></button>
-                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Sí" (click)="confirmDelete()"
-                    [loading]="loadingConfirmDelete"></button>
-            </ng-template>
-        </p-dialog>
-    -->
+
+          </div>
+        </ng-template>
+
+        <!-- ================== HEADER ================== -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="min-width: 160px;">Partido</th>
+            <th style="min-width: 90px; text-align: center;">Año</th>
+
+            <th *ngFor="let mes of mesesRequeridos"
+                style="min-width: 80px; text-align: center;">
+              {{ mes }}
+            </th>
+
+            <th style="min-width: 70px; text-align: center;">
+              +
+            </th>
+          </tr>
+        </ng-template>
+
+        <!-- ================== BODY ================== -->
+        <ng-template pTemplate="body" let-fila>
+          <tr>
+
+            <!-- Partido -->
+            <td style="min-width: 160px;">
+              {{ fila.partidoNombre }}
+            </td>
+
+            <!-- Año -->
+            <td style="min-width: 90px; text-align: center;">
+              <p-inputNumber
+                [(ngModel)]="fila.anio"
+                [useGrouping]="false"
+                [min]="2000"
+                [max]="2100"
+                inputStyleClass="w-full text-center">
+              </p-inputNumber>
+            </td>
+
+            <!-- Meses -->
+            <td *ngFor="let mes of mesesRequeridos"
+                style="min-width: 80px; text-align: center;">
+
+              <p-inputNumber
+                [(ngModel)]="fila[mes].porcentaje"
+                mode="decimal"
+                [minFractionDigits]="0"
+                [maxFractionDigits]="2"
+                inputStyleClass="w-full text-center"
+                (onBlur)="onMesValueChange(fila, mes, fila[mes].porcentaje)">
+              </p-inputNumber>
+
+            </td>
+
+            <!-- Acciones -->
+            <td style="text-align: center;">
+
+                <!-- Agregar año anterior -->
+  <button
+    pButton
+    icon="pi pi-calendar-minus"
+    class="p-button-rounded p-button-text p-button-sm"
+    pTooltip="Agregar año anterior"
+    tooltipPosition="left"
+    (click)="agregarAnioAnteriorDesdeFila(fila)">
+  </button>
+  
+              <button
+                pButton
+                icon="pi pi-calendar-plus"
+                class="p-button-rounded p-button-text p-button-sm"
+                pTooltip="Agregar año siguiente"
+                tooltipPosition="left"
+                (click)="agregarAnioDesdeFila(fila)">
+              </button>
+              <button
+  pButton
+  icon="pi pi-trash"
+  class="p-button-rounded p-button-text p-button-sm p-button-danger"
+  pTooltip="Eliminar año completo"
+  tooltipPosition="left"
+  (click)="eliminarFila(fila)">
+</button>
+
+            </td>
+            
+
+          </tr>
+        </ng-template>
+
+      </p-table>
+
     </div>
+  </div>
 </div>
